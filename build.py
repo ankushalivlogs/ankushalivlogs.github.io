@@ -12,7 +12,8 @@ SITE = {
     "channel": "Ankushali Vlogs",
     "tagline": "Real parenting, everyday finds & Kushu ki masti. Everything we use, in one place.",
     "youtube": "https://www.youtube.com/@Ankushali_Vlogs",
-    "instagram": "https://www.instagram.com/ankushalii_",  # video descriptions say ankushali_ - check which is right
+    "instagram": "https://www.instagram.com/ankushali_",
+    "facebook": "https://www.facebook.com/profile.php?id=61586491452811",
 }
 CATS = [  # (label, icon, keywords) - first match wins, order = order on the page
     ("Baby Feeding", "🍼", ["cerelac", "teat", "nipple", "bottle", "feeding", "formula", "sipper", "high chair"]),
@@ -91,7 +92,7 @@ def page(title, body, depth=0):
 {WAVE}
 <footer><div class="fgrid"><div><div class="brand">{esc(SITE['name'])}</div><p>{esc(SITE['tagline'])}</p></div>
 <div><h5>Explore</h5><a href="{r}index.html#picks">Our picks</a><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#blog">Blog</a></div>
-<div><h5>Follow</h5><a href="{SITE['youtube']}">YouTube</a><a href="{SITE['instagram']}">Instagram</a></div></div>
+<div><h5>Follow</h5><a href="{SITE['youtube']}">YouTube</a><a href="{SITE['instagram']}">Instagram</a><a href="{SITE['facebook']}">Facebook</a></div></div>
 <p class="fine">As an Amazon Associate we earn from qualifying purchases. Product links are affiliate links; they cost you nothing extra. Shared from our own experience, not medical advice: please check with your doctor for health questions.</p>
 <p class="fine">&copy; {esc(SITE['name'])} &middot; {esc(SITE['channel'])}</p></footer></body></html>"""
 
