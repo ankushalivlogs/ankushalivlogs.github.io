@@ -57,10 +57,13 @@ def nice(d):  # 20261023 -> 23 Oct 2026
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
+def shrink(u):  # Amazon serves any size: ask for 300px instead of the 1200-1500px originals (~200KB -> ~10KB)
+    return re.sub(r"\._[A-Z]{2}\d+_\.", "._SL300_.", u) if "media-amazon.com" in u else u
+
 def thumb(src, alt=""):
     if not src:
         return '<div class="pimg ph">&#128717;</div>'
-    return f'<img class="pimg" loading="lazy" referrerpolicy="no-referrer" src="{esc(src)}" alt="{esc(alt)}">'
+    return f'<img class="pimg" loading="lazy" decoding="async" width="300" height="300" referrerpolicy="no-referrer" src="{esc(shrink(src))}" alt="{esc(alt)}">'
 
 def load():
     rows = [json.loads(l) for l in (ROOT / "data/raw.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -103,7 +106,9 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(image)}">
 {ldj}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://i.ytimg.com"><link rel="preconnect" href="https://m.media-amazon.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="{r}style.css"></head><body>
 <header><a class="brand" href="{r}index.html">{esc(SITE['name'])}</a>
 <nav><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a>
@@ -179,7 +184,7 @@ def main():
 
     def vcard(v):
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in v["plinks"])
-        return (f'<article class="card vid" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}"><a href="{esc(v["webpage_url"])}"><img loading="lazy" '
+        return (f'<article class="card vid" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}"><a href="{esc(v["webpage_url"])}"><img loading="lazy" decoding="async" '
                 f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360"></a>'
                 f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
@@ -190,7 +195,7 @@ def main():
     def athumb(p):  # product photo if the article has related products, else a coloured emoji tile
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         img = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
-        inner = (f'<img src="{esc(img)}" alt="{esc(p["title"])}" loading="lazy" referrerpolicy="no-referrer">' if img
+        inner = (f'<img src="{esc(shrink(img))}" alt="{esc(p["title"])}" loading="lazy" decoding="async" width="300" height="169" referrerpolicy="no-referrer">' if img
                  else f'<span>{dict(ART_CATS).get(p["cat"], "📖")}</span>')
         return f'<div class="athumb c-{slug(p["cat"])}">{inner}</div>'
 
