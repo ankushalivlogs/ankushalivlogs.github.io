@@ -57,13 +57,13 @@ def nice(d):  # 20261023 -> 23 Oct 2026
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
-def shrink(u):  # Amazon serves any size: ask for 300px instead of the 1200-1500px originals (~200KB -> ~10KB)
-    return re.sub(r"\._[A-Z]{2}\d+_\.", "._SL300_.", u) if "media-amazon.com" in u else u
+def shrink(u, n=420):  # Amazon serves any size: ask for 300px instead of the 1200-1500px originals (~200KB -> ~10KB)
+    return re.sub(r"\._[A-Z]{2}\d+_\.", "._SL%d_." % n, u) if "media-amazon.com" in u else u
 
 def thumb(src, alt=""):
     if not src:
         return '<div class="pimg ph">&#128717;</div>'
-    return f'<img class="pimg" loading="lazy" decoding="async" width="300" height="300" referrerpolicy="no-referrer" src="{esc(shrink(src))}" alt="{esc(alt)}">'
+    return f'<img class="pimg" loading="lazy" decoding="async" width="420" height="420" referrerpolicy="no-referrer" src="{esc(shrink(src))}" alt="{esc(alt)}">'
 
 def load():
     rows = [json.loads(l) for l in (ROOT / "data/raw.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -192,10 +192,10 @@ def main():
     short_v = [v for v in vids if v["short"]]
     arts = posts()
 
-    def athumb(p):  # product photo if the article has related products, else a coloured emoji tile
+    def athumb(p, big=False):  # product photo if the article has related products, else a coloured emoji tile
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         img = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
-        inner = (f'<img src="{esc(shrink(img))}" alt="{esc(p["title"])}" loading="lazy" decoding="async" width="300" height="169" referrerpolicy="no-referrer">' if img
+        inner = (f'<img src="{esc(shrink(img, 760 if big else 420))}" alt="{esc(p["title"])}" loading="lazy" decoding="async" referrerpolicy="no-referrer">' if img
                  else f'<span>{dict(ART_CATS).get(p["cat"], "📖")}</span>')
         return f'<div class="athumb c-{slug(p["cat"])}">{inner}</div>'
 
@@ -276,7 +276,7 @@ addEventListener('hashchange',show);show()</script>""")
         more.sort(key=lambda a: a["cat"] != p["cat"])
         morehtml = f'<section class="related"><h2>More parenting articles</h2><div class="grid">{"".join(acard(a, "") for a in more[:3])}</div></section>' if more else ""
         b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small><time datetime="{p["date"]}">{p["date"]}</time> &middot; {p["mins"]} min read</small>'
-             f'<div class="abig">{athumb(p)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}{morehtml}</main>')
+             f'<div class="abig">{athumb(p, True)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}{morehtml}</main>')
         path = f"articles/{p['slug']}.html"
         photo = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
         d = p["desc"] or p["excerpt"][:155]
