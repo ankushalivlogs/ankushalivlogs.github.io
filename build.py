@@ -209,7 +209,7 @@ def main():
 <label>Sort by <select id="vsort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="views">Most viewed</option></select></label></div>
 <div class="carousel"><button class="arrow" id="vprev" aria-label="Previous">&lsaquo;</button><div class="track" id="vtrack">{''.join(vcard(v) for v in vids)}</div><button class="arrow" id="vnext" aria-label="Next">&rsaquo;</button></div></section>
 <section id="products"><h2>Meet our favourite finds</h2><p class="sub">Baby must-haves, gadgets, audio, shoes and more. Pick a section or search.</p>
-<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chips">{chips}</div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
+<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chipcar"><button class="arrow prev sm" aria-label="Scroll sections left">&lsaquo;</button><div class="chips" id="chips">{chips}</div><button class="arrow next sm" aria-label="Scroll sections right">&rsaquo;</button></div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
 <section id="articles"><h2>Parenting articles</h2><p class="sub">Why parents choose these products, and what to know before you buy.</p><div class="grid">{latest}</div>
 <p class="more"><a class="gbtn" href="articles.html">See all articles</a></p></section></main>
 <script>
@@ -226,7 +226,10 @@ vs.sort((a,b)=>key(a)-key(b)).forEach(c=>{{c.hidden=t!=='all'&&c.dataset.type!==
 document.getElementById('vtype').onchange=document.getElementById('vsort').onchange=vrender;
 document.getElementById('vprev').onclick=()=>tr.scrollBy({{left:-tr.clientWidth*.8,behavior:'smooth'}});
 document.getElementById('vnext').onclick=()=>tr.scrollBy({{left:tr.clientWidth*.8,behavior:'smooth'}});
-function arrows(){{document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track'),more=t.scrollWidth>t.clientWidth+4;c.querySelectorAll('.arrow').forEach(a=>a.hidden=!more)}})}}
+const cc=document.querySelector('.chipcar'),cr=document.getElementById('chips');
+cc.querySelector('.prev').onclick=()=>cr.scrollBy({{left:-cr.clientWidth*.7,behavior:'smooth'}});
+cc.querySelector('.next').onclick=()=>cr.scrollBy({{left:cr.clientWidth*.7,behavior:'smooth'}});
+function arrows(){{const m=cr.scrollWidth>cr.clientWidth+4;cc.querySelectorAll('.arrow').forEach(a=>a.hidden=!m);document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track'),more=t.scrollWidth>t.clientWidth+4;c.querySelectorAll('.arrow').forEach(a=>a.hidden=!more)}})}}
 document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track');
 c.querySelector('.prev').onclick=()=>t.scrollBy({{left:-t.clientWidth*.8,behavior:'smooth'}});
 c.querySelector('.next').onclick=()=>t.scrollBy({{left:t.clientWidth*.8,behavior:'smooth'}})}});
