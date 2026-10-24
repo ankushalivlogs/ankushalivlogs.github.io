@@ -190,10 +190,14 @@ with sync_playwright() as pw:
         u = queue.pop(0)
         if u in seen: continue
         seen.add(u)
-        try:
-            html_ = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=25).read().decode("utf-8", "ignore")
-        except Exception as e:
-            bad.append((u, getattr(e, "code", str(e)))); continue
+        html_ = None
+        for attempt in range(3):  # live hosting can drop a connection now and then: retry
+            try:
+                html_ = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=25).read().decode("utf-8", "ignore"); break
+            except Exception as e:
+                err = getattr(e, "code", str(e)); time.sleep(1.5)
+        if html_ is None:
+            bad.append((u, err)); continue
         for m in re.findall(r'href="([^"#]+)"', html_):
             if m.startswith(("http", "mailto", "data:", "javascript")): continue
             t = urljoin(u, m).split("?")[0]
