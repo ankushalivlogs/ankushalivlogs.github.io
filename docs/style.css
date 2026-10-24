@@ -59,3 +59,4 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 .c-toddlers{background:var(--butter)}.c-kids{background:var(--sky)}.c-teens{background:#d9ccf5}.c-parents{background:var(--sage)}
 @media(prefers-color-scheme:dark){.c-teens{background:#4a3d73}}
 .abig .athumb{aspect-ratio:21/9;margin:12px 0 4px;font-size:72px}
+.arrow.prev{left:-10px}.arrow.next{right:-10px}.cat .track .card{flex:0 0 min(230px,72%)}.cat .arrow{top:32%}

@@ -174,7 +174,7 @@ def main():
     chips = '<button class="chip on" data-c="all">All <small>%d</small></button>' % len(products) + "".join(
         f'<button class="chip" data-c="{slug(l)}">{i} {esc(l)} <small>{len(ps)}</small></button>' for (l, i), ps in groups)
     sections = "".join(
-        f'<section class="cat" data-c="{slug(l)}"><h3>{i} {esc(l)}</h3><div class="grid">' + "".join(prod_card(p) for p in ps) + "</div></section>"
+        f'<section class="cat" data-c="{slug(l)}"><h3>{i} {esc(l)}</h3><div class="carousel"><button class="arrow prev" aria-label="Previous">&lsaquo;</button><div class="track">' + "".join(prod_card(p) for p in ps) + '</div><button class="arrow next" aria-label="Next">&rsaquo;</button></div></section>'
         for (l, i), ps in groups)
 
     def vcard(v):
@@ -217,7 +217,7 @@ const cards=[...document.querySelectorAll('.prod')],secs=[...document.querySelec
 let cat='all',q='';
 function apply(){{let any=false;cards.forEach(c=>{{const ok=c.textContent.toLowerCase().includes(q);c.hidden=!ok}});
 secs.forEach(s=>{{const vis=(cat==='all'||s.dataset.c===cat)&&[...s.querySelectorAll('.prod')].some(c=>!c.hidden);s.hidden=!vis;any=any||vis}});
-document.getElementById('none').hidden=any}}
+document.getElementById('none').hidden=any;arrows()}}
 document.getElementById('q').oninput=e=>{{q=e.target.value.toLowerCase();apply()}};
 const tr=document.getElementById('vtrack'),vs=[...tr.children];
 function vrender(){{const t=document.getElementById('vtype').value,k=document.getElementById('vsort').value;
@@ -226,6 +226,11 @@ vs.sort((a,b)=>key(a)-key(b)).forEach(c=>{{c.hidden=t!=='all'&&c.dataset.type!==
 document.getElementById('vtype').onchange=document.getElementById('vsort').onchange=vrender;
 document.getElementById('vprev').onclick=()=>tr.scrollBy({{left:-tr.clientWidth*.8,behavior:'smooth'}});
 document.getElementById('vnext').onclick=()=>tr.scrollBy({{left:tr.clientWidth*.8,behavior:'smooth'}});
+function arrows(){{document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track'),more=t.scrollWidth>t.clientWidth+4;c.querySelectorAll('.arrow').forEach(a=>a.hidden=!more)}})}}
+document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track');
+c.querySelector('.prev').onclick=()=>t.scrollBy({{left:-t.clientWidth*.8,behavior:'smooth'}});
+c.querySelector('.next').onclick=()=>t.scrollBy({{left:t.clientWidth*.8,behavior:'smooth'}})}});
+addEventListener('resize',arrows);addEventListener('load',arrows);
 chips.forEach(b=>b.onclick=()=>{{cat=b.dataset.c;chips.forEach(x=>x.classList.toggle('on',x===b));apply()}});
 </script>"""
 
