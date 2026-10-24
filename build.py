@@ -159,9 +159,9 @@ def main():
     imgs_f = ROOT / "data/images.json"
     imgs = json.loads(imgs_f.read_text()) if imgs_f.exists() else {}
 
-    def prod_card(p, seen=True):
-        return (f'<a class="card prod" href="{esc(p["link"])}" rel="sponsored noopener" target="_blank">'
-                f'{thumb(imgs.get(p["link"]), p["name"])}<b>{esc(p["name"])}</b>'
+    def prod_card(p, seen=True, c=None):
+        return (f'<a class="card prod"' + (f' data-c="{slug(c[0])}"' if c else "") + f' href="{esc(p["link"])}" rel="sponsored noopener" target="_blank">'
+                f'{thumb(imgs.get(p["link"]), p["name"])}' + (f'<span class="tag">{c[1]} {esc(c[0])}</span>' if c else "") + f'<b>{esc(p["name"])}</b>'
                 + (f'<small>Seen in: {esc(byid[p["vids"][0]]["title"][:46])}</small>' if seen else "")
                 + f'<span class="go">View on {store(p["link"])} &rarr;</span></a>')
 
@@ -173,9 +173,9 @@ def main():
 
     chips = '<button class="chip on" data-c="all">All <small>%d</small></button>' % len(products) + "".join(
         f'<button class="chip" data-c="{slug(l)}">{i} {esc(l)} <small>{len(ps)}</small></button>' for (l, i), ps in groups)
-    sections = "".join(
-        f'<section class="cat" data-c="{slug(l)}"><h3>{i} {esc(l)}</h3><div class="carousel"><button class="arrow prev" aria-label="Previous">&lsaquo;</button><div class="track">' + "".join(prod_card(p) for p in ps) + '</div><button class="arrow next" aria-label="Next">&rsaquo;</button></div></section>'
-        for (l, i), ps in groups)
+    sections = ('<div class="carousel"><button class="arrow prev" id="pprev" aria-label="Previous">&lsaquo;</button><div class="track" id="ptrack">'
+                + "".join(prod_card(p, True, (l, i)) for (l, i), ps in groups for p in ps)
+                + '</div><button class="arrow next" id="pnext" aria-label="Next">&rsaquo;</button></div>')
 
     def vcard(v):
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in v["plinks"])
@@ -209,15 +209,14 @@ def main():
 <label>Sort by <select id="vsort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="views">Most viewed</option></select></label></div>
 <div class="carousel"><button class="arrow" id="vprev" aria-label="Previous">&lsaquo;</button><div class="track" id="vtrack">{''.join(vcard(v) for v in vids)}</div><button class="arrow" id="vnext" aria-label="Next">&rsaquo;</button></div></section>
 <section id="products"><h2>Meet our favourite finds</h2><p class="sub">Baby must-haves, gadgets, audio, shoes and more. Pick a section or search.</p>
-<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chipcar"><button class="arrow prev sm" aria-label="Scroll sections left">&lsaquo;</button><div class="chips" id="chips">{chips}</div><button class="arrow next sm" aria-label="Scroll sections right">&rsaquo;</button></div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
+<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chips">{chips}</div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
 <section id="articles"><h2>Parenting articles</h2><p class="sub">Why parents choose these products, and what to know before you buy.</p><div class="grid">{latest}</div>
 <p class="more"><a class="gbtn" href="articles.html">See all articles</a></p></section></main>
 <script>
-const cards=[...document.querySelectorAll('.prod')],secs=[...document.querySelectorAll('.cat')],chips=[...document.querySelectorAll('.chip')];
+const cards=[...document.querySelectorAll('.prod')],chips=[...document.querySelectorAll('.chip')],pt=document.getElementById('ptrack');
 let cat='all',q='';
-function apply(){{let any=false;cards.forEach(c=>{{const ok=c.textContent.toLowerCase().includes(q);c.hidden=!ok}});
-secs.forEach(s=>{{const vis=(cat==='all'||s.dataset.c===cat)&&[...s.querySelectorAll('.prod')].some(c=>!c.hidden);s.hidden=!vis;any=any||vis}});
-document.getElementById('none').hidden=any;arrows()}}
+function apply(){{let n=0;cards.forEach(c=>{{const ok=(cat==='all'||c.dataset.c===cat)&&c.textContent.toLowerCase().includes(q);c.hidden=!ok;n+=ok}});
+document.getElementById('none').hidden=n>0;pt.scrollLeft=0}}
 document.getElementById('q').oninput=e=>{{q=e.target.value.toLowerCase();apply()}};
 const tr=document.getElementById('vtrack'),vs=[...tr.children];
 function vrender(){{const t=document.getElementById('vtype').value,k=document.getElementById('vsort').value;
@@ -226,14 +225,8 @@ vs.sort((a,b)=>key(a)-key(b)).forEach(c=>{{c.hidden=t!=='all'&&c.dataset.type!==
 document.getElementById('vtype').onchange=document.getElementById('vsort').onchange=vrender;
 document.getElementById('vprev').onclick=()=>tr.scrollBy({{left:-tr.clientWidth*.8,behavior:'smooth'}});
 document.getElementById('vnext').onclick=()=>tr.scrollBy({{left:tr.clientWidth*.8,behavior:'smooth'}});
-const cc=document.querySelector('.chipcar'),cr=document.getElementById('chips');
-cc.querySelector('.prev').onclick=()=>cr.scrollBy({{left:-cr.clientWidth*.7,behavior:'smooth'}});
-cc.querySelector('.next').onclick=()=>cr.scrollBy({{left:cr.clientWidth*.7,behavior:'smooth'}});
-function arrows(){{const m=cr.scrollWidth>cr.clientWidth+4;cc.querySelectorAll('.arrow').forEach(a=>a.hidden=!m);document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track'),more=t.scrollWidth>t.clientWidth+4;c.querySelectorAll('.arrow').forEach(a=>a.hidden=!more)}})}}
-document.querySelectorAll('.cat .carousel').forEach(c=>{{const t=c.querySelector('.track');
-c.querySelector('.prev').onclick=()=>t.scrollBy({{left:-t.clientWidth*.8,behavior:'smooth'}});
-c.querySelector('.next').onclick=()=>t.scrollBy({{left:t.clientWidth*.8,behavior:'smooth'}})}});
-addEventListener('resize',arrows);addEventListener('load',arrows);
+document.getElementById('pprev').onclick=()=>pt.scrollBy({{left:-pt.clientWidth*.8,behavior:'smooth'}});
+document.getElementById('pnext').onclick=()=>pt.scrollBy({{left:pt.clientWidth*.8,behavior:'smooth'}});
 chips.forEach(b=>b.onclick=()=>{{cat=b.dataset.c;chips.forEach(x=>x.classList.toggle('on',x===b));apply()}});
 </script>"""
 
