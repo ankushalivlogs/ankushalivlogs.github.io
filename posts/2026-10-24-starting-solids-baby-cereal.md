@@ -1,4 +1,5 @@
-# Starting solids: how to think about baby cereal
+# Starting Solids: How to Introduce Baby Cereal Like Cerelac Safely
+Description: When to start solids at 6 months, how to introduce baby cereal step by step, and what to watch for with allergies, honey, salt and sugar.
 Category: Babies
 Products: cerelac
 

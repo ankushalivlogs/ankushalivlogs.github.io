@@ -1,4 +1,5 @@
-# Baby walkers and ride-on toys: what to know before you buy
+# Baby Walkers vs Ride-On Toys: Are They Safe? What Parents Should Know
+Description: Why paediatric experts warn against wheeled baby walkers, safer alternatives, and how to use ride-on toys safely.
 Category: Toddlers
 Products: walker, ride-on
 

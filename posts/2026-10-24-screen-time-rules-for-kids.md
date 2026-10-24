@@ -1,4 +1,5 @@
-# Screen time for kids: simple family rules that work
+# Screen Time for Kids: Simple Family Rules That Work
+Description: Age-wise screen time guidelines and easy family rules to balance screens with sleep, play, meals and family time.
 Category: Kids
 
 Mobile, tablet, TV: aaj ke bachche screens ke saath hi bade ho rahe hain. Goal screens ko poori tarah hataana nahi hai, balki unhe ek healthy jagah dena hai.

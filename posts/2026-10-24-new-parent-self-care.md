@@ -1,4 +1,5 @@
-# New parent self-care: sleep, support and asking for help
+# New Parent Self-Care: Sleep, Support and When to Ask for Help
+Description: Simple self-care for new parents: sleep in pieces, eat well, ask for help, and how to tell baby blues from postpartum depression.
 Category: Parents
 
 Naye parents baby ka dhyaan toh rakhte hain, lekin apna bhool jaate hain. Par thaka hua parent baby ko best nahi de sakta, isliye apna khayal rakhna swarth nahi hai.

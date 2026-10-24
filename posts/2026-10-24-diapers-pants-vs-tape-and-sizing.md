@@ -1,4 +1,5 @@
-# Diapers: pants or tape, and how to pick the right size
+# Baby Diapers: Pants vs Tape and How to Pick the Right Size
+Description: Pull-up pants or tape diapers? Learn how to choose the right diaper size, how often to change, and how to prevent nappy rash.
 Category: Babies
 Products: mamy, diaper, pants
 

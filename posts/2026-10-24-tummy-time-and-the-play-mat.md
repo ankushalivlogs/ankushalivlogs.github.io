@@ -1,4 +1,5 @@
-# Tummy time and why a foldable play mat earns its space
+# Tummy Time and Play Mats: Why Every Baby Needs Floor Play
+Description: How to do tummy time safely, why a foldable play mat helps, and what to look for when buying a baby play mat.
 Category: Babies
 Products: playing mat, play mat
 

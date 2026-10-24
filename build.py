@@ -2,7 +2,7 @@
 Run: python build.py   (or ./fetch.sh to re-pull descriptions from YouTube + product photos first)
 Any "Name: https://link" line in a video description becomes a product, auto-sorted into a section by keywords in the name.
 Articles: posts/YYYY-MM-DD-slug.md  ->  line 1 "# Title", optional line 2 "Products: keyword, keyword" (shows matching products below)."""
-import html, json, re, shutil
+import datetime, html, json, os, re, shutil
 from pathlib import Path
 import markdown
 
@@ -11,6 +11,7 @@ OUT = ROOT / "docs"
 SITE = {
     "name": "Ankushali Vlogs",
     "tagline": "Real parenting, everyday finds & Kushu ki masti. Everything we use, in one place.",
+    "url": "https://ankushalivlogs.github.io",
     "youtube": "https://www.youtube.com/@Ankushali_Vlogs",
     "instagram": "https://www.instagram.com/ankushali_",
     "facebook": "https://www.facebook.com/profile.php?id=61586491452811",
@@ -56,10 +57,10 @@ def nice(d):  # 20261023 -> 23 Oct 2026
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
-def thumb(src):
+def thumb(src, alt=""):
     if not src:
         return '<div class="pimg ph">&#128717;</div>'
-    return f'<img class="pimg" loading="lazy" referrerpolicy="no-referrer" src="{esc(src)}" alt="">'
+    return f'<img class="pimg" loading="lazy" referrerpolicy="no-referrer" src="{esc(src)}" alt="{esc(alt)}">'
 
 def load():
     rows = [json.loads(l) for l in (ROOT / "data/raw.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -85,11 +86,22 @@ WAVE = """<div class="wave"><svg class="rocket" viewBox="0 0 64 96" aria-hidden=
 <svg viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wg" x1="0" x2="1"><stop offset="0" stop-color="#f4a261"/><stop offset=".5" stop-color="#e8607a"/><stop offset="1" stop-color="#7b5cc4"/></linearGradient></defs>
 <path d="M0 90C220 20 380 130 700 90S1180 10 1440 70V160H0Z" fill="url(#wg)"/></svg></div>"""
 
-def page(title, body, depth=0):
+def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="website", published=None):
     r = "../" * depth
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+    desc = desc or "Parenting tips and honest guides, plus the baby, home and everyday products we use, as seen in the Ankushali Vlogs family vlogs."
+    url = f"{SITE['url']}/{path}"
+    image = image or f"{SITE['url']}/og.png"
+    ldj = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (ld or []))
+    pub = f'<meta property="article:published_time" content="{published}">' if published else ""
+    return f"""<!doctype html><html lang="en-IN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title>
-<meta name="description" content="Honest parenting articles and the baby, home and everyday products we use, as seen in our vlogs.">
+<meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="{url}"><meta name="theme-color" content="#7b5cc4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%B6%3C/text%3E%3C/svg%3E">
+<meta property="og:site_name" content="{esc(SITE['name'])}"><meta property="og:type" content="{kind}"><meta property="og:locale" content="en_IN">
+<meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{esc(image)}">{pub}
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(image)}">
+{ldj}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{r}style.css"></head><body>
@@ -113,19 +125,26 @@ def catbar(prefix, arts, active=None):
 
 def posts():
     out = []
+    ist = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    today = os.environ.get("PREVIEW_ALL") and "9999" or datetime.datetime.now(ist).strftime("%Y-%m-%d")
     for f in sorted((ROOT / "posts").glob("*.md"), reverse=True):
+        if f.stem[:10] > today:  # scheduled for a future date: not published yet
+            continue
         lines = f.read_text(encoding="utf-8").splitlines()
         title = lines[0].lstrip("# ").strip()
         rest, kw, cat = lines[1:], [], "Parents"
-        while rest and re.match(r"(products|category):", rest[0], re.I):
+        desc = ""
+        while rest and re.match(r"(products|category|description):", rest[0], re.I):
             k, v = rest[0].split(":", 1)
             if k.lower() == "products":
                 kw = [x.strip().lower() for x in v.split(",") if x.strip()]
+            elif k.lower() == "description":
+                desc = v.strip()
             else:
                 cat = v.strip().title()
             rest = rest[1:]
         md = "\n".join(rest).strip()
-        out.append({"slug": f.stem[11:], "date": f.stem[:10], "title": title, "kw": kw, "cat": cat,
+        out.append({"slug": f.stem[11:], "date": f.stem[:10], "title": title, "kw": kw, "cat": cat, "desc": desc,
                     "excerpt": re.sub(r"[*_`#>]", "", md.split("\n\n")[0]).strip(),
                     "mins": max(1, round(len(md.split()) / 200)), "body": markdown.markdown(md)})
     return out
@@ -133,6 +152,7 @@ def posts():
 def main():
     vids, products = load()
     shutil.rmtree(OUT / "blog", ignore_errors=True)  # old URL
+    shutil.rmtree(OUT / "articles", ignore_errors=True)  # drop pages of unpublished/removed articles
     (OUT / "articles").mkdir(parents=True, exist_ok=True)
     (OUT / ".nojekyll").write_text("")
     byid = {v["id"]: v for v in vids}
@@ -141,7 +161,7 @@ def main():
 
     def prod_card(p, seen=True):
         return (f'<a class="card prod" href="{esc(p["link"])}" rel="sponsored noopener" target="_blank">'
-                f'{thumb(imgs.get(p["link"]))}<b>{esc(p["name"])}</b>'
+                f'{thumb(imgs.get(p["link"]), p["name"])}<b>{esc(p["name"])}</b>'
                 + (f'<small>Seen in: {esc(byid[p["vids"][0]]["title"][:46])}</small>' if seen else "")
                 + f'<span class="go">View on {store(p["link"])} &rarr;</span></a>')
 
@@ -160,7 +180,7 @@ def main():
     def vcard(v):
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in v["plinks"])
         return (f'<article class="card vid" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}"><a href="{esc(v["webpage_url"])}"><img loading="lazy" '
-                f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt=""></a>'
+                f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360"></a>'
                 f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
     long_v = [v for v in vids if not v["short"]]
@@ -170,17 +190,17 @@ def main():
     def athumb(p):  # product photo if the article has related products, else a coloured emoji tile
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         img = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
-        inner = (f'<img src="{esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer">' if img
+        inner = (f'<img src="{esc(img)}" alt="{esc(p["title"])}" loading="lazy" referrerpolicy="no-referrer">' if img
                  else f'<span>{dict(ART_CATS).get(p["cat"], "📖")}</span>')
         return f'<div class="athumb c-{slug(p["cat"])}">{inner}</div>'
 
-    def acard(p):
-        return (f'<a class="card post" data-cat="{slug(p["cat"])}" href="articles/{p["slug"]}.html">{athumb(p)}<small>{esc(p["cat"])} &middot; {p["date"]} &middot; {p["mins"]} min read</small>'
+    def acard(p, pre="articles/"):
+        return (f'<a class="card post" data-cat="{slug(p["cat"])}" href="{pre}{p["slug"]}.html">{athumb(p)}<small>{esc(p["cat"])} &middot; {p["date"]} &middot; {p["mins"]} min read</small>'
                 f'<b>{esc(p["title"])}</b><span class="ex">{esc(p["excerpt"][:140])}...</span><span class="go">Read article &rarr;</span></a>')
     latest = "".join(acard(p) for p in arts[:3]) or "<p>Coming soon.</p>"
 
     body = f"""<section class="hero"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
-<h1>Find what we <em>actually use</em></h1><p>{esc(SITE['tagline'])}</p>
+<h1>Parenting tips &amp; baby products we <em>actually use</em></h1><p>{esc(SITE['tagline'])}</p>
 <div class="strip"><div class="stat"><b>{len(products)}</b><small>Products</small></div>
 <div class="stat"><b>{len(long_v) + len(short_v)}</b><small>Videos</small></div><div class="stat"><b>{len(arts)}</b><small>Articles</small></div>
 <p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></section>
@@ -208,21 +228,52 @@ document.getElementById('vprev').onclick=()=>tr.scrollBy({{left:-tr.clientWidth*
 document.getElementById('vnext').onclick=()=>tr.scrollBy({{left:tr.clientWidth*.8,behavior:'smooth'}});
 chips.forEach(b=>b.onclick=()=>{{cat=b.dataset.c;chips.forEach(x=>x.classList.toggle('on',x===b));apply()}});
 </script>"""
-    (OUT / "index.html").write_text(page(SITE["name"] + " - Parenting, Baby Products & Everyday Finds", body), encoding="utf-8")
+
+    org = {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/", "sameAs": [SITE["youtube"], SITE["instagram"], SITE["facebook"]]}
+    home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": SITE["name"], "url": SITE["url"] + "/", "inLanguage": "en-IN"},
+               {"@context": "https://schema.org", **org}]
+    (OUT / "index.html").write_text(page(SITE["name"] + " | Parenting Tips, Baby Products & Family Vlogs",
+        body, desc="Honest parenting guides for babies, toddlers, kids and teens, plus the baby and everyday products we use in our family vlogs. Real tips for parents and parents-to-be.",
+        path="", ld=home_ld), encoding="utf-8")
 
     lst = (catbar("", arts) + '<main><h1 class="ptitle">Parenting articles</h1><p class="sub">Why parents choose these products, and what to know before you buy.</p>'
            f'<div class="grid" id="agrid">{"".join(acard(p) for p in arts)}</div><p id="anone" hidden>No articles here yet. Check back soon!</p></main>'
            """<script>function show(){const h=location.hash.slice(1)||'all';let n=0;document.querySelectorAll('#agrid .card').forEach(c=>{const ok=h==='all'||c.dataset.cat===h;c.hidden=!ok;n+=ok});
 document.getElementById('anone').hidden=n>0;document.querySelectorAll('.catbar a').forEach(a=>a.classList.toggle('on',a.dataset.c===h))}
 addEventListener('hashchange',show);show()</script>""")
-    (OUT / "articles.html").write_text(page("Articles - " + SITE["name"], lst), encoding="utf-8")
+    (OUT / "articles.html").write_text(page("Parenting Articles: Babies, Toddlers, Kids & Teens | " + SITE["name"], lst,
+        desc="Practical parenting articles on newborns, babies, toddlers, kids, teens and new-parent life, plus why parents choose common baby products.",
+        path="articles.html", ld=[{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Parenting articles", "url": SITE["url"] + "/articles.html"}]), encoding="utf-8")
 
+    urls = [SITE["url"] + "/", SITE["url"] + "/articles.html"]
     for p in arts:
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         related = (f'<section class="related"><h2>Products from our vlogs</h2><div class="grid">{"".join(prod_card(x, False) for x in rel)}</div></section>' if rel else "")
-        b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small>{p["date"]} &middot; {p["mins"]} min read</small>'
-             f'<div class="abig">{athumb(p)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}</main>')
-        (OUT / f"articles/{p['slug']}.html").write_text(page(p["title"], b, 1), encoding="utf-8")
+        more = [a for a in arts if a is not p]
+        more.sort(key=lambda a: a["cat"] != p["cat"])
+        morehtml = f'<section class="related"><h2>More parenting articles</h2><div class="grid">{"".join(acard(a, "") for a in more[:3])}</div></section>' if more else ""
+        b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small><time datetime="{p["date"]}">{p["date"]}</time> &middot; {p["mins"]} min read</small>'
+             f'<div class="abig">{athumb(p)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}{morehtml}</main>')
+        path = f"articles/{p['slug']}.html"
+        photo = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
+        d = p["desc"] or p["excerpt"][:155]
+        ld = [{"@context": "https://schema.org", "@type": "Article", "headline": p["title"], "description": d, "inLanguage": "en-IN",
+               "datePublished": p["date"], "dateModified": p["date"], "mainEntityOfPage": f"{SITE['url']}/{path}",
+               "image": [photo or SITE["url"] + "/og.png"], "author": {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/"},
+               "publisher": {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/"}},
+              {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                  {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE["url"] + "/"},
+                  {"@type": "ListItem", "position": 2, "name": "Articles", "item": SITE["url"] + "/articles.html"},
+                  {"@type": "ListItem", "position": 3, "name": p["title"], "item": f"{SITE['url']}/{path}"}]}]
+        (OUT / path).write_text(page(f"{p['title']} | {SITE['name']}", b, 1, desc=d, path=path, image=photo, ld=ld, kind="article", published=p["date"]), encoding="utf-8")
+        urls.append(f"{SITE['url']}/{path}")
+
+    # sitemap, robots, 404
+    today = datetime.date.today().isoformat()
+    (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "".join(f"<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
+    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE['url']}/sitemap.xml\n", encoding="utf-8")
+    (OUT / "404.html").write_text(page("Page not found | " + SITE["name"], '<main style="text-align:center;padding:80px 18px"><h1>Oops, page not found</h1><p>The page may have moved. Try our <a href="/articles.html">parenting articles</a> or go back <a href="/">home</a>.</p></main>', 0, path="404.html").replace('<meta name="robots" content="index,follow,max-image-preview:large">', '<meta name="robots" content="noindex">').replace('href="style.css"', 'href="/style.css"').replace('href="index.html', 'href="/index.html').replace('href="articles.html', 'href="/articles.html'), encoding="utf-8")
     print(f"built: {len(vids)} videos, {len(products)} products in {len(groups)} sections, {len(arts)} articles")
 
 if __name__ == "__main__":

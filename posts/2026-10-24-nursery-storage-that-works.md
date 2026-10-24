@@ -1,4 +1,5 @@
-# Nursery storage that actually works
+# Nursery Storage Ideas: How to Choose and Organise a Kids' Wardrobe
+Description: What to look for in a baby or kids' wardrobe, safety tips like wall anchoring, and simple ways to organise baby clothes.
 Category: Parents
 Products: wardrobe, almira
 

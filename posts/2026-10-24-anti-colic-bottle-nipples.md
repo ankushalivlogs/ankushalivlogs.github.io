@@ -1,4 +1,5 @@
-# Why parents choose anti-colic bottle nipples
+# Anti-Colic Bottle Nipples: Do They Really Work? A Parent's Guide
+Description: What colic is, how anti-colic bottle nipples work, how to pick the right neck size and flow, and when to call the doctor.
 Category: Babies
 Products: teat, nipple, bottle
 

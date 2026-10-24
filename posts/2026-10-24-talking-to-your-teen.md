@@ -1,4 +1,5 @@
-# Talking to your teen: how to start conversations that don't end in a fight
+# How to Talk to Your Teenager Without Fighting
+Description: Practical ways to start conversations with your teen, listen better, set fair rules and spot warning signs that need professional help.
 Category: Teens
 
 Teenage mein bachcha apni duniya banata hai, aur parents ko lagta hai ki wo door ho gaya hai. Sach ye hai ki teens ko aapki zaroorat pehle se zyada hoti hai, bas style alag chahiye.
