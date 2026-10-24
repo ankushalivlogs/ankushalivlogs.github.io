@@ -54,3 +54,8 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 .catbar a:hover{border-color:var(--rose)}.catbar a.on{background:var(--grad);color:#fff;border-color:transparent}
 #anone{text-align:center;color:var(--mut);padding:30px 0}
 @media(max-width:640px){.catbar{justify-content:flex-start}}
+.athumb{aspect-ratio:16/9;border-radius:16px;display:grid;place-items:center;overflow:hidden;font-size:56px;background:var(--blush)}
+.athumb img{width:100%;height:100%;object-fit:contain;padding:8px;background:#fff}
+.c-toddlers{background:var(--butter)}.c-kids{background:var(--sky)}.c-teens{background:#d9ccf5}.c-parents{background:var(--sage)}
+@media(prefers-color-scheme:dark){.c-teens{background:#4a3d73}}
+.abig .athumb{aspect-ratio:21/9;margin:12px 0 4px;font-size:72px}

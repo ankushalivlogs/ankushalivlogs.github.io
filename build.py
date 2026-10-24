@@ -167,8 +167,15 @@ def main():
     short_v = [v for v in vids if v["short"]]
     arts = posts()
 
+    def athumb(p):  # product photo if the article has related products, else a coloured emoji tile
+        rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
+        img = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
+        inner = (f'<img src="{esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer">' if img
+                 else f'<span>{dict(ART_CATS).get(p["cat"], "📖")}</span>')
+        return f'<div class="athumb c-{slug(p["cat"])}">{inner}</div>'
+
     def acard(p):
-        return (f'<a class="card post" data-cat="{slug(p["cat"])}" href="articles/{p["slug"]}.html"><small>{esc(p["cat"])} &middot; {p["date"]} &middot; {p["mins"]} min read</small>'
+        return (f'<a class="card post" data-cat="{slug(p["cat"])}" href="articles/{p["slug"]}.html">{athumb(p)}<small>{esc(p["cat"])} &middot; {p["date"]} &middot; {p["mins"]} min read</small>'
                 f'<b>{esc(p["title"])}</b><span class="ex">{esc(p["excerpt"][:140])}...</span><span class="go">Read article &rarr;</span></a>')
     latest = "".join(acard(p) for p in arts[:3]) or "<p>Coming soon.</p>"
 
@@ -214,7 +221,7 @@ addEventListener('hashchange',show);show()</script>""")
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         related = (f'<section class="related"><h2>Products from our vlogs</h2><div class="grid">{"".join(prod_card(x, False) for x in rel)}</div></section>' if rel else "")
         b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small>{p["date"]} &middot; {p["mins"]} min read</small>'
-             f'<h1>{esc(p["title"])}</h1>{p["body"]}{related}</main>')
+             f'<div class="abig">{athumb(p)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}</main>')
         (OUT / f"articles/{p['slug']}.html").write_text(page(p["title"], b, 1), encoding="utf-8")
     print(f"built: {len(vids)} videos, {len(products)} products in {len(groups)} sections, {len(arts)} articles")
 
