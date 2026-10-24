@@ -1,4 +1,5 @@
 # Nursery storage that actually works
+Category: Parents
 Products: wardrobe, almira
 
 Baby ke kapde bahut jaldi chhote ho jaate hain, aur saaman roz badhta hai. Ek acchi storage setup se subah ke 5 minute bach jaate hain.

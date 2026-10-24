@@ -1,4 +1,5 @@
 # Why parents choose anti-colic bottle nipples
+Category: Babies
 Products: teat, nipple, bottle
 
 Raat ke 2 baje jab baby ruk ruk ke rota hai aur aap samajh nahi paate kya karein, tab har parent koi bhi solution try karna chahta hai. Anti-colic nipples usually isi mod par kaam aate hain. Yahan hai ki ye kya hote hain aur kya nahi.

@@ -1,4 +1,5 @@
 # Tummy time and why a foldable play mat earns its space
+Category: Babies
 Products: playing mat, play mat
 
 Ek soft, saaf jagah jahan baby lete, palte aur khele, yahi play mat ka kaam hai. Lekin iska asli faayda tummy time hai.

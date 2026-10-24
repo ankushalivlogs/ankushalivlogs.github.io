@@ -49,3 +49,8 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 .ptitle{text-align:center;font-weight:600;margin:40px 0 4px}.more{text-align:center;margin-top:22px}.ex{color:var(--mut);font-size:14px}.post .go{color:var(--rose);font-weight:700;font-size:14px;margin-top:auto}.post{gap:8px}
 .post-page h2{text-align:left;font-size:22px;margin:30px 0 6px}.post-page p,.post-page li{font-size:17px}.post-page ul{padding-left:22px}.crumb{margin:0 0 10px}.crumb a{color:var(--violet);text-decoration:none;font-weight:700}
 .related{margin-top:40px}.related h2{margin-top:0}
+.catbar{display:flex;gap:8px;overflow-x:auto;justify-content:center;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--card)}
+.catbar a{white-space:nowrap;text-decoration:none;font:600 14px Nunito,sans-serif;padding:6px 16px;border-radius:99px;border:2px solid var(--line);color:var(--fg)}
+.catbar a:hover{border-color:var(--rose)}.catbar a.on{background:var(--grad);color:#fff;border-color:transparent}
+#anone{text-align:center;color:var(--mut);padding:30px 0}
+@media(max-width:640px){.catbar{justify-content:flex-start}}

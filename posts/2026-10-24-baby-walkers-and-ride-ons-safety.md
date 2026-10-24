@@ -1,4 +1,5 @@
 # Baby walkers and ride-on toys: what to know before you buy
+Category: Toddlers
 Products: walker, ride-on
 
 Baby walker sunke lagta hai ki chalna jaldi seekh jayega. Sach thoda alag hai, aur isliye ye article zaroori hai.

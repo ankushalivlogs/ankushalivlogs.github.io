@@ -31,6 +31,7 @@ CATS = [  # (label, icon, keywords) - first match wins, order = order on the pag
     ("Books & Learning", "📚", ["book", "course", "notebook"]),
 ]
 FALLBACK = ("More Finds", "✨")
+ART_CATS = [("Babies", "👶"), ("Toddlers", "🧸"), ("Kids", "🎒"), ("Teens", "🎧"), ("Parents", "💛")]  # article categories
 SKIP_DOMAINS = ("youtube.com", "youtu.be", "instagram.com", "facebook.com", "twitter.com", "x.com", "wa.me", "t.me")
 esc = html.escape
 
@@ -101,17 +102,26 @@ def page(title, body, depth=0):
 <p class="fine">As an Amazon Associate we earn from qualifying purchases. Product links are affiliate links; they cost you nothing extra. Shared from our own experience, not medical advice: please check with your doctor for health questions.</p>
 <p class="fine">&copy; {esc(SITE['name'])}</p></footer></body></html>"""
 
+def catbar(prefix, arts, active=None):
+    n = lambda c: sum(1 for a in arts if a["cat"] == c)
+    items = "".join(f'<a href="{prefix}articles.html#{slug(c)}" data-c="{slug(c)}"{" class=on" if c == active else ""}>{i} {c}</a>' for c, i in ART_CATS)
+    return f'<div class="catbar"><a href="{prefix}articles.html#all" data-c="all">All articles</a>{items}</div>'
+
 def posts():
     out = []
     for f in sorted((ROOT / "posts").glob("*.md"), reverse=True):
         lines = f.read_text(encoding="utf-8").splitlines()
         title = lines[0].lstrip("# ").strip()
-        rest, kw = lines[1:], []
-        if rest and rest[0].lower().startswith("products:"):
-            kw = [k.strip().lower() for k in rest[0].split(":", 1)[1].split(",") if k.strip()]
+        rest, kw, cat = lines[1:], [], "Parents"
+        while rest and re.match(r"(products|category):", rest[0], re.I):
+            k, v = rest[0].split(":", 1)
+            if k.lower() == "products":
+                kw = [x.strip().lower() for x in v.split(",") if x.strip()]
+            else:
+                cat = v.strip().title()
             rest = rest[1:]
         md = "\n".join(rest).strip()
-        out.append({"slug": f.stem[11:], "date": f.stem[:10], "title": title, "kw": kw,
+        out.append({"slug": f.stem[11:], "date": f.stem[:10], "title": title, "kw": kw, "cat": cat,
                     "excerpt": re.sub(r"[*_`#>]", "", md.split("\n\n")[0]).strip(),
                     "mins": max(1, round(len(md.split()) / 200)), "body": markdown.markdown(md)})
     return out
@@ -154,7 +164,7 @@ def main():
     arts = posts()
 
     def acard(p):
-        return (f'<a class="card post" href="articles/{p["slug"]}.html"><small>{p["date"]} &middot; {p["mins"]} min read</small>'
+        return (f'<a class="card post" data-cat="{slug(p["cat"])}" href="articles/{p["slug"]}.html"><small>{esc(p["cat"])} &middot; {p["date"]} &middot; {p["mins"]} min read</small>'
                 f'<b>{esc(p["title"])}</b><span class="ex">{esc(p["excerpt"][:140])}...</span><span class="go">Read article &rarr;</span></a>')
     latest = "".join(acard(p) for p in arts[:3]) or "<p>Coming soon.</p>"
 
@@ -189,13 +199,17 @@ chips.forEach(b=>b.onclick=()=>{{cat=b.dataset.c;chips.forEach(x=>x.classList.to
 </script>"""
     (OUT / "index.html").write_text(page(SITE["name"] + " - Parenting, Baby Products & Everyday Finds", body), encoding="utf-8")
 
-    lst = f'<main><h1 class="ptitle">Parenting articles</h1><p class="sub">Why parents choose these products, and what to know before you buy.</p><div class="grid">{"".join(acard(p) for p in arts)}</div></main>'
+    lst = (catbar("", arts) + '<main><h1 class="ptitle">Parenting articles</h1><p class="sub">Why parents choose these products, and what to know before you buy.</p>'
+           f'<div class="grid" id="agrid">{"".join(acard(p) for p in arts)}</div><p id="anone" hidden>No articles here yet. Check back soon!</p></main>'
+           """<script>function show(){const h=location.hash.slice(1)||'all';let n=0;document.querySelectorAll('#agrid .card').forEach(c=>{const ok=h==='all'||c.dataset.cat===h;c.hidden=!ok;n+=ok});
+document.getElementById('anone').hidden=n>0;document.querySelectorAll('.catbar a').forEach(a=>a.classList.toggle('on',a.dataset.c===h))}
+addEventListener('hashchange',show);show()</script>""")
     (OUT / "articles.html").write_text(page("Articles - " + SITE["name"], lst), encoding="utf-8")
 
     for p in arts:
         rel = [x for x in products.values() if any(k in x["name"].lower() for k in p["kw"])]
         related = (f'<section class="related"><h2>Products from our vlogs</h2><div class="grid">{"".join(prod_card(x, False) for x in rel)}</div></section>' if rel else "")
-        b = (f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small>{p["date"]} &middot; {p["mins"]} min read</small>'
+        b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small>{p["date"]} &middot; {p["mins"]} min read</small>'
              f'<h1>{esc(p["title"])}</h1>{p["body"]}{related}</main>')
         (OUT / f"articles/{p['slug']}.html").write_text(page(p["title"], b, 1), encoding="utf-8")
     print(f"built: {len(vids)} videos, {len(products)} products in {len(groups)} sections, {len(arts)} articles")

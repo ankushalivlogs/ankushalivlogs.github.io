@@ -1,4 +1,5 @@
 # Diapers: pants or tape, and how to pick the right size
+Category: Babies
 Products: mamy, diaper, pants
 
 Diapers ek aisi cheez hain jo har parent din mein 6 se 10 baar use karta hai. Isliye thoda sa samajh lena bahut kaam aata hai.

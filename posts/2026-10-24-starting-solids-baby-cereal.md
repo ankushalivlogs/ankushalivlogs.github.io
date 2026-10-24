@@ -1,4 +1,5 @@
 # Starting solids: how to think about baby cereal
+Category: Babies
 Products: cerelac
 
 Chhe mahine ka hote hi sab log pooch ne lagte hain, "ab kya khilaana shuru karein?" Baby cereal like Cerelac is a popular first step because it is quick, smooth and fortified. But it is one option among several, and it helps to know how to use it well.
