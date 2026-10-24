@@ -108,7 +108,7 @@ with sync_playwright() as pw:
         page.click(".chip[data-c='play-gear']"); n = page.evaluate("() => [...document.querySelectorAll('.prod')].filter(c => !c.hidden).length")
         rec(vp, "products: category chip filters", 0 < n < total, f"{n} of {total}")
         page.click(".chip[data-c='all']"); rec(vp, "products: 'All' restores everything", page.evaluate("() => [...document.querySelectorAll('.prod')].filter(c => !c.hidden).length") == total)
-        bad_rel = page.evaluate("() => [...document.querySelectorAll('.prod')].filter(a => !/sponsored/.test(a.rel) || a.target !== '_blank').length")
+        bad_rel = page.evaluate("() => [...document.querySelectorAll('.prod .buy, .feat .buy')].filter(a => !/sponsored/.test(a.rel) || a.target !== '_blank').length")
         rec(vp, "affiliate links have rel=sponsored + new tab", bad_rel == 0, f"{bad_rel} bad")
 
         # --- accessibility basics
@@ -139,6 +139,67 @@ with sync_playwright() as pw:
         rec(vp, "article: English only (no Hinglish markers)", not re.search(r"\b(nahi|kya|karein|bahut|zaroor|mein|hota|jaata)\b", page.inner_text("main"), re.I))
         ctx.close()
 
+
+    # ---------- new conversion features: top picks, categories, watch-and-shop modal, product + category pages, sticky bar, share
+    for vp, w, h, touch in (("phone 375", 375, 812, True), ("tablet 768", 768, 1024, True), ("laptop 1366", 1366, 768, False)):
+        ctx = browser.new_context(viewport={"width": w, "height": h}, has_touch=touch, is_mobile=touch and w < 800)
+        page = ctx.new_page(); errs = []
+        page.on("pageerror", lambda e: errs.append(str(e)))
+        page.goto(BASE + "/index.html", wait_until="load"); page.wait_for_timeout(1500)
+        page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')"); page.wait_for_timeout(1500)
+        rec(vp, "home: top picks shows 3 cards with Buy buttons", page.evaluate("() => document.querySelectorAll('.feat .buy').length") >= 1)
+        tiles = page.evaluate("() => [...document.querySelectorAll('.tile')].map(a => a.getAttribute('href'))")
+        rec(vp, "home: category tiles present", len(tiles) >= 5, f"{len(tiles)} tiles")
+        # modal: open a video that lists products, check player + products + close
+        page.evaluate("() => { const c = [...document.querySelectorAll('#vtrack .vid')].find(c => JSON.parse(c.dataset.prods).length >= 1); c.scrollIntoView({block:'center'}); window.__c = c }")
+        page.wait_for_timeout(600)
+        page.evaluate("() => window.__c.querySelector('.vthumb').click()"); page.wait_for_timeout(900)
+        st = page.evaluate("() => ({open: document.getElementById('vmodal').open, src: (document.querySelector('#vframe iframe')||{}).src || '', prods: document.querySelectorAll('.vmp').length, title: document.getElementById('vmtitle').textContent.length})")
+        rec(vp, "modal: opens with YouTube player + product list", st["open"] and "youtube-nocookie.com/embed/" in st["src"] and st["prods"] >= 1 and st["title"] > 0, str(st))
+        inside = page.evaluate("() => { const r = document.getElementById('vmodal').getBoundingClientRect(); return r.left >= -1 && r.right <= innerWidth + 1 && r.top >= -1 && r.bottom <= innerHeight + 1 }")
+        rec(vp, "modal: fits inside the screen", inside)
+        page.keyboard.press("Escape"); page.wait_for_timeout(400)
+        rec(vp, "modal: Esc closes and stops the video", page.evaluate("() => !document.getElementById('vmodal').open && !document.getElementById('vframe').innerHTML"))
+        # sticky mobile bar
+        if w < 760:
+            page.evaluate("() => scrollTo(0, 1200)"); page.wait_for_timeout(700)
+            rec(vp, "sticky mobile bar appears after scrolling", page.evaluate("() => document.querySelector('.mbar').classList.contains('show')"))
+        # category page
+        page.goto(BASE + "/" + tiles[0], wait_until="load"); page.wait_for_timeout(500)
+        o = page.evaluate(JS_OVERFLOW); rec(vp, "category page: no horizontal scroll", o["sw"] <= o["W"] + 1 and not o["bad"], str(o))
+        n = page.evaluate("() => document.querySelectorAll('.prod').length")
+        rec(vp, "category page: lists products + checklist + h1", n >= 1 and page.evaluate("() => !!document.querySelector('h1') && document.querySelectorAll('.checklist li').length >= 3"), f"{n} products")
+        # product page
+        href = page.evaluate("() => document.querySelector('.prod .pn').getAttribute('href')")
+        page.goto(BASE + "/" + href.replace("../", ""), wait_until="load"); page.wait_for_timeout(800)
+        page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')"); page.wait_for_timeout(2500)
+        pi = page.evaluate("""() => ({h1: !!document.querySelector('h1'), buy: (() => { const a = document.querySelector('.buyrow .buy'); return !!a && /sponsored/.test(a.rel) && a.target === '_blank' && /^https?:/.test(a.href) })(),
+            img: (() => { const i = document.querySelector('.bigimg img'); return !!i && i.naturalWidth > 100 })(), crumbs: !!document.querySelector('.crumb'), wa: !!document.querySelector('.share .wa'),
+            ld: [...document.querySelectorAll('script[type="application/ld+json"]')].every(s => { try { JSON.parse(s.textContent); return true } catch (e) { return false } }), checklist: document.querySelectorAll('.checklist li').length})""")
+        rec(vp, "product page: h1, working Buy link, image, breadcrumb, share, valid JSON-LD", all([pi["h1"], pi["buy"], pi["img"], pi["crumbs"], pi["wa"], pi["ld"], pi["checklist"] >= 3]), str(pi))
+        o = page.evaluate(JS_OVERFLOW); rec(vp, "product page: no horizontal scroll", o["sw"] <= o["W"] + 1 and not o["bad"], str(o))
+        if w < 760:
+            page.evaluate("() => scrollTo(0, 900)"); page.wait_for_timeout(700)
+            rec(vp, "product page: sticky Buy bar visible on phone", page.evaluate("() => { const b = document.querySelector('.mbar'); return b.classList.contains('show') && /Check price/.test(b.textContent) }"))
+        rec(vp, "new pages: no JS errors", not errs, str(errs[:2]))
+        ctx.close()
+
+    # crawl every internal link found on home, category and product pages (one level) and make sure none are broken
+    seen, bad, queue = set(), [], [BASE + "/index.html"]
+    while queue and len(seen) < 120:
+        u = queue.pop(0)
+        if u in seen: continue
+        seen.add(u)
+        try:
+            html_ = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=25).read().decode("utf-8", "ignore")
+        except Exception as e:
+            bad.append((u, getattr(e, "code", str(e)))); continue
+        for m in re.findall(r'href="([^"#]+)"', html_):
+            if m.startswith(("http", "mailto", "data:", "javascript")): continue
+            t = urljoin(u, m).split("?")[0]
+            if t.startswith(BASE) and t not in seen and t.endswith((".html", "/")): queue.append(t)
+    rec("site", f"crawl: {len(seen)} internal pages reachable, 0 broken", not bad, str(bad[:5]))
+
     # ---------- theme + motion preferences
     for scheme in ("light", "dark"):
         ctx = browser.new_context(viewport={"width": 1366, "height": 768}, color_scheme=scheme); page = ctx.new_page()
@@ -155,7 +216,7 @@ with sync_playwright() as pw:
 
 # ---------- links + SEO files (no browser)
 home = urllib.request.urlopen(BASE + "/index.html").read().decode("utf-8")
-links = sorted({urljoin(BASE + "/", m) for m in re.findall(r'(?:href|src)="([^"#]+)"', home) if not m.startswith(("http", "data:", "mailto"))})
+links = sorted({urljoin(BASE + "/", m) for m in re.findall(r'(?:href|src)="([^"#]+)"', home) if not m.startswith(("http", "data:", "mailto")) and "'" not in m and "+" not in m})
 bad = [(u, get_status(u)) for u in links if get_status(u) != 200]
 rec("site", f"internal links/assets from home ({len(links)})", not bad, str(bad[:5]))
 sm = urllib.request.urlopen(BASE + "/sitemap.xml").read().decode()
