@@ -2,7 +2,7 @@
 Category: Kids
 Description: Practical, pressure-free ways to help picky eaters accept new foods, from repeated exposure to making meals fun.
 
-"Ye nahi khaunga!" Har ghar ki kahaani. Picky eating bahut common hai, aur usse jeetne ka tarika pressure nahi, patience hai.
+"I won't eat this!" Every home has heard it. Picky eating is very common, and the way to win is patience, not pressure.
 
 ## Why kids are picky
 From around age 2, children naturally become wary of new foods. Appetite also slows down after infancy, so they may eat much less than before. This is normal.

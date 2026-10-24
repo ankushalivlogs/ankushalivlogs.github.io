@@ -2,7 +2,7 @@
 Category: Toddlers
 Description: Why toddlers have tantrums and what actually helps: stay calm, name feelings, offer choices and prevent triggers before they start.
 
-Supermarket mein zameen par let jaana, zor zor se rona: har parent ne ye dekha hai. Tantrums bad parenting nahi, normal development hain.
+Lying on the supermarket floor and screaming at the top of their lungs: every parent has seen it. Tantrums are not bad parenting. They are normal development.
 
 ## Why tantrums happen
 Toddlers have big feelings and very few words. They want independence but cannot yet control their emotions. Hunger, tiredness, being overstimulated or being told "no" can tip them over.
@@ -10,7 +10,7 @@ Toddlers have big feelings and very few words. They want independence but cannot
 ## During the tantrum
 1. **Stay calm.** Your calm is the best tool. Take a breath.
 2. **Keep them safe.** Move away from hard objects or crowds if needed.
-3. **Name the feeling.** "Tum gusse mein ho kyunki cartoon band ho gaya."
+3. **Name the feeling.** "You are upset because the cartoon ended."
 4. **Don't reason mid-meltdown.** They cannot listen yet. Wait.
 5. **Don't give in** to the demand, or they learn that tantrums work. You can still be kind.
 
@@ -19,7 +19,7 @@ Offer a hug, then briefly talk about what happened in simple words. Praise them 
 
 ## Prevent them
 - Keep regular meal, nap and bedtime routines.
-- Give a **5-minute warning** before transitions ("Do more minute, phir bath").
+- Give a **5-minute warning** before transitions ("Two more minutes, then bath time").
 - Offer **limited choices** ("Red cup or blue cup?") so they feel in control.
 - Say what they **can** do instead of only "no".
 - Carry a snack and a small toy when going out.

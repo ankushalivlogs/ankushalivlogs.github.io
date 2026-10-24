@@ -2,7 +2,7 @@
 Category: Babies
 Description: Why on-time baby vaccines matter, how to keep a vaccination card, what mild side effects are normal, and when to call the doctor.
 
-Vaccines baby ko serious beemariyon se bachate hain. Schedule yaad rakhna parents ke liye ek bada kaam hai, isliye ye tips kaam aayenge.
+Vaccines protect babies from serious illnesses. Remembering the schedule is a big job for parents, so these tips will help.
 
 ## Why vaccines matter
 Vaccines train a baby's body to fight infections such as polio, measles, tuberculosis, hepatitis B, diphtheria, whooping cough and tetanus. Following the schedule gives protection when babies are most at risk.

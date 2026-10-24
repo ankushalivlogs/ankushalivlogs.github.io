@@ -3,7 +3,7 @@ Category: Toddlers
 Description: How to know your toddler is ready for potty training, plus a step-by-step gentle approach that avoids pressure and power struggles.
 Products: mamy, diaper, pants
 
-Potty training ka koi fixed din nahi hota. Bachche ki taiyari dekhna zyada zaroori hai, kyunki zabardasti ulta nuksaan karti hai.
+There is no fixed day for potty training. Watching for your child's readiness matters more than the calendar, because forcing it usually backfires.
 
 ## Signs your child is ready
 Most children show readiness between 18 and 36 months. Look for:
@@ -21,7 +21,7 @@ Most children show readiness between 18 and 36 months. Look for:
 5. **Use easy clothes.** Pull-up pants and loose bottoms help.
 
 ## Accidents will happen
-Stay calm, clean up and say "Koi baat nahi, next time potty mein." Punishing or shaming causes stress and delays training.
+Stay calm, clean up and say "That is okay. Next time in the potty." Punishing or shaming causes stress and delays training.
 
 ## Nights
 Night dryness often comes months or even years after daytime training. Many children still need a diaper at night, and that is normal.

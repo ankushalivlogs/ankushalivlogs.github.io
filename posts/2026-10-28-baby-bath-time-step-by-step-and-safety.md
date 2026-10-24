@@ -2,7 +2,7 @@
 Category: Babies
 Description: How to bathe a baby safely: water temperature, what you need, step-by-step bathing, sponge baths for newborns and key safety rules.
 
-Pehli baar baby ko nehlana dar jaisa lagta hai. Thodi si taiyari aur ye mazedaar routine ban jaata hai.
+Bathing your baby for the first time can feel scary. A little preparation turns it into a fun routine.
 
 ## Sponge bath first
 Until the umbilical cord stump falls off and heals, give a **sponge bath** with a soft damp cloth instead of putting baby in a tub.

@@ -3,7 +3,7 @@ Category: Parents
 Description: A practical room-by-room baby-proofing checklist covering stairs, sockets, furniture, kitchen, bathroom and balcony safety.
 Products: wardrobe, almira
 
-Jaise hi baby palatna aur ghuasna shuru karta hai, ghar ek naye kheloon wala maidan ban jaata hai. Thodi si taiyari baat badi bachati hai.
+As soon as your baby starts rolling and crawling, your home becomes a new playground. A little preparation prevents a lot of trouble.
 
 ## Start low
 Get down on your knees and look around at baby's eye level. Anything you can reach, they will too.

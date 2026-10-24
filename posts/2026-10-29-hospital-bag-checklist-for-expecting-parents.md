@@ -2,7 +2,7 @@
 Category: Parents
 Description: A simple hospital bag checklist for mom, baby and partner, with documents, clothes and comfort items to pack before delivery.
 
-Delivery ki date paas aa rahi hai? Ye checklist 36th week tak pack kar lein, taki last minute mein bhaag-daud na ho.
+Is your delivery date coming close? Pack this bag by week 36 so you do not have to rush at the last minute.
 
 ## Documents (keep in one folder)
 - ID proofs, insurance papers and hospital registration

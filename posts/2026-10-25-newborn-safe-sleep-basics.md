@@ -2,7 +2,7 @@
 Category: Babies
 Description: Safe sleep rules for newborns: back to sleep, firm flat surface, empty cot, room sharing and how to avoid overheating.
 
-Naya baby, nayi neend ki tension. Ye rules yaad rakhna bahut zaroori hai kyunki ye sudden infant death (SIDS) ka risk kam karte hain.
+A new baby brings new worries about sleep. Please remember these rules, because they lower the risk of sudden infant death syndrome (SIDS).
 
 ## The ABCs of safe sleep
 - **A**lone: baby sleeps in their own cot or bassinet, not on an adult bed, sofa or armchair.

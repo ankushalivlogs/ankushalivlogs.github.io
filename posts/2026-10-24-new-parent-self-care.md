@@ -2,7 +2,7 @@
 Description: Simple self-care for new parents: sleep in pieces, eat well, ask for help, and how to tell baby blues from postpartum depression.
 Category: Parents
 
-Naye parents baby ka dhyaan toh rakhte hain, lekin apna bhool jaate hain. Par thaka hua parent baby ko best nahi de sakta, isliye apna khayal rakhna swarth nahi hai.
+New parents look after the baby first and forget about themselves. But an exhausted parent cannot give their best, so taking care of yourself is not selfish.
 
 ## Sleep in pieces
 Unbroken sleep is rare in the first months. What helps:

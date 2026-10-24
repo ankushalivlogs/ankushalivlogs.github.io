@@ -3,7 +3,7 @@ Category: Babies
 Description: A simple guide to baby milestones from 2 to 12 months, including smiling, rolling, sitting, crawling and first words, plus when to talk to your doctor.
 Products: playing mat, play mat
 
-Har baby apni raftaar se badhta hai. Ye guide ek rough idea deti hai, na ki race ka scoreboard.
+Every baby grows at their own pace. This guide gives a rough idea, not a race scoreboard.
 
 ## About 2 months
 Social smiles, following faces and sounds, holding the head up briefly during tummy time, and cooing.

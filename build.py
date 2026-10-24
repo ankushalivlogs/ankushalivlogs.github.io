@@ -100,7 +100,7 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{url}"><meta name="theme-color" content="#7b5cc4"><script>document.documentElement.className="js"</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%B6%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="{r}img/favicon.png"><link rel="apple-touch-icon" href="{r}img/apple-touch-icon.png">
 <meta property="og:site_name" content="{esc(SITE['name'])}"><meta property="og:type" content="{kind}"><meta property="og:locale" content="en_IN">
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{esc(image)}">{pub}
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(image)}">
@@ -116,6 +116,9 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <a class="soc" href="{SITE['facebook']}" aria-label="Facebook" target="_blank" rel="noopener">{ICO_FB}</a>
 <a class="navbtn" href="{SITE['youtube']}">Subscribe</a></nav></header>
 {body}
+<section class="join"><img src="{r}img/banner-sticker.webp" alt="Ankushali Vlogs family: Ankur, Vaishali and baby Kushu" width="1500" height="600" loading="lazy" decoding="async">
+<h2>Join the Ankushali family</h2><p>Family vlogs, real parenting tips and the products we use. New videos every week.</p>
+<div class="btns"><a class="gbtn shine" href="{SITE['youtube']}">Subscribe on YouTube</a><a class="ghost" href="{SITE['instagram']}">Instagram</a><a class="ghost" href="{SITE['facebook']}">Facebook</a></div></section>
 {WAVE}
 <footer><div class="fgrid"><div><div class="brand">{esc(SITE['name'])}</div><p>{esc(SITE['tagline'])}</p></div>
 <div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a></div>
@@ -206,19 +209,20 @@ def main():
 
     fl = json.loads((ROOT / "data/floaties.json").read_text(encoding="utf-8"))
     floaties = "".join(f'<div class="f f{n}" style="--r:{r}deg"><span style="--d:{d}px">{fl[k]}</span></div>'
-                       for n, (k, r, d) in enumerate([("kushu", -8, 18), ("teddy", 7, -14), ("rocket", 12, 22), ("bottle", -10, -18), ("pacifier", 6, 12)], 1))
+                       for n, (k, r, d) in enumerate([("teddy", 7, -14), ("rocket", 12, 22), ("bottle", -10, -18)], 1))
     words = ["Parenting", "tips", "&amp;", "baby", "products", "we", "actually", "use"]
     h1w = "".join(("<em>" if k == 6 else "") + f'<span class="w" style="--i:{k}">{w}</span> ' + ("</em>" if k == 7 else "") for k, w in enumerate(words))
     chips_m = ["👶 Babies", "🧸 Toddlers", "🎒 Kids", "🎧 Teens", "💛 Parents", "🍼 Feeding tips", "🛏️ Safe sleep", "🧷 Diaper guides", "🎥 Family vlogs", "🛍️ Products we use"]
     marq = "".join(f"<span>{c}</span>" for c in chips_m * 2)
 
-    body = f"""<div class="herowrap"><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><div class="floaties" aria-hidden="true">{floaties}</div>
-<section class="hero"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
+    body = f"""<div class="herowrap"><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<section class="hero"><div class="hcopy"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
 <h1 class="split">{h1w}</h1><p class="lead">{esc(SITE['tagline'])}</p>
 <div class="btns"><a class="gbtn shine" href="#vlogs">Watch our vlogs</a><a class="ghost" href="#products">Shop our picks</a></div>
 <div class="strip"><div class="stat"><b data-n="{len(products)}">{len(products)}</b><small>Products</small></div>
 <div class="stat"><b data-n="{len(long_v) + len(short_v)}">{len(long_v) + len(short_v)}</b><small>Videos</small></div><div class="stat"><b data-n="{len(arts)}">{len(arts)}</b><small>Articles</small></div>
-<p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></section></div>
+<p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></div>
+<div class="hvis"><img class="hphoto" src="img/family-sticker.webp" alt="Ankur, Vaishali and baby Kushu of Ankushali Vlogs" width="900" height="900" fetchpriority="high" decoding="async"><div class="floaties" aria-hidden="true">{floaties}</div></div></section></div>
 <div class="marquee" aria-hidden="true"><div class="mtrack">{marq}</div></div>
 <main><section id="vlogs"><h2>Our vlogs</h2><p class="sub">Every video, with the products from its description.</p>
 <div class="vtools"><label>Show <select id="vtype"><option value="all">All videos</option><option value="video">Vlogs</option><option value="short">Shorts</option></select></label>
@@ -252,7 +256,7 @@ const step=t=>{{t0=t0||t;const k=Math.min((t-t0)/1100,1);b.textContent=Math.roun
 const hw=document.querySelector('.herowrap');hw.addEventListener('pointermove',e=>{{const r=hw.getBoundingClientRect();hw.style.setProperty('--px',((e.clientX-r.left)/r.width-.5)*2);hw.style.setProperty('--py',((e.clientY-r.top)/r.height-.5)*2)}})}}
 </script>"""
 
-    org = {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/", "sameAs": [SITE["youtube"], SITE["instagram"], SITE["facebook"]]}
+    org = {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/", "logo": SITE["url"] + "/img/apple-touch-icon.png", "sameAs": [SITE["youtube"], SITE["instagram"], SITE["facebook"]]}
     home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": SITE["name"], "url": SITE["url"] + "/", "inLanguage": "en-IN"},
                {"@context": "https://schema.org", **org}]
     (OUT / "index.html").write_text(page(SITE["name"] + " | Parenting Tips, Baby Products & Family Vlogs",
@@ -276,7 +280,7 @@ addEventListener('hashchange',show);show()</script>""")
         more.sort(key=lambda a: a["cat"] != p["cat"])
         morehtml = f'<section class="related"><h2>More parenting articles</h2><div class="grid">{"".join(acard(a, "") for a in more[:3])}</div></section>' if more else ""
         b = (catbar("../", arts, p["cat"]) + f'<main class="post-page"><p class="crumb"><a href="../articles.html">&larr; All articles</a></p><small><time datetime="{p["date"]}">{p["date"]}</time> &middot; {p["mins"]} min read</small>'
-             f'<div class="abig">{athumb(p, True)}</div><h1>{esc(p["title"])}</h1>{p["body"]}{related}{morehtml}</main>')
+             f'<div class="abig">{athumb(p, True)}</div><h1>{esc(p["title"])}</h1>{p["body"]}<aside class="author"><img src="../img/family-sticker.webp" alt="" width="96" height="96" loading="lazy" decoding="async"><div><b>Written by the Ankushali Vlogs family</b><p>Ankur, Vaishali and little Kushu share what they learn as parents. This is general information, not medical advice. Please ask your doctor about health questions.</p><a href="{SITE['youtube']}">Watch our family vlogs &rarr;</a></div></aside>{related}{morehtml}</main>')
         path = f"articles/{p['slug']}.html"
         photo = next((imgs[x["link"]] for x in rel if imgs.get(x["link"])), None)
         d = p["desc"] or p["excerpt"][:155]

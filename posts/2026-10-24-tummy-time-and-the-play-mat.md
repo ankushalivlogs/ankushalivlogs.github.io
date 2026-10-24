@@ -3,7 +3,7 @@ Description: How to do tummy time safely, why a foldable play mat helps, and wha
 Category: Babies
 Products: playing mat, play mat
 
-Ek soft, saaf jagah jahan baby lete, palte aur khele, yahi play mat ka kaam hai. Lekin iska asli faayda tummy time hai.
+A soft, clean place where baby can lie, roll and play: that is what a play mat is for. But its real benefit is tummy time.
 
 ## What is tummy time?
 Tummy time means placing baby on their tummy while awake and watched. It builds strength in the neck, shoulders and arms, which baby needs for rolling, sitting and crawling. It also helps prevent a flat spot at the back of the head.

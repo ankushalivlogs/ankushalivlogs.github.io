@@ -3,7 +3,7 @@ Category: Parents
 Description: How to travel with a baby by car, train or flight: what to pack, feeding and sleep tips, safety, and when to check with your doctor first.
 Products: gopro, camera
 
-Family trips aur mandir darshan ho ya shaadi, baby ke saath safar thoda plan karke karein toh mazedaar ban jaata hai.
+Whether it is a family trip, a temple visit or a wedding, travelling with a baby becomes enjoyable with a little planning.
 
 ## Before you go
 - Check with your paediatrician, especially for newborns, long trips or flights. Many airlines have age limits for very young babies.

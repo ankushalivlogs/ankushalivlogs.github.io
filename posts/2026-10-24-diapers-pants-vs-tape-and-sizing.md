@@ -3,7 +3,7 @@ Description: Pull-up pants or tape diapers? Learn how to choose the right diaper
 Category: Babies
 Products: mamy, diaper, pants
 
-Diapers ek aisi cheez hain jo har parent din mein 6 se 10 baar use karta hai. Isliye thoda sa samajh lena bahut kaam aata hai.
+Parents get through 6 to 10 diapers a day, so it pays to understand the basics.
 
 ## Pants vs tape
 - **Tape diapers** suit newborns and young babies who mostly lie down. They are easy to adjust and sit below the umbilical cord stump.

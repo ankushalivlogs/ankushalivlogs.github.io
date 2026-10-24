@@ -3,7 +3,7 @@ Description: When to start solids at 6 months, how to introduce baby cereal step
 Category: Babies
 Products: cerelac
 
-Chhe mahine ka hote hi sab log pooch ne lagte hain, "ab kya khilaana shuru karein?" Baby cereal like Cerelac is a popular first step because it is quick, smooth and fortified. But it is one option among several, and it helps to know how to use it well.
+Around the six-month mark, everyone starts asking, "So what do we feed the baby now?" Baby cereal like Cerelac is a popular first step because it is quick, smooth and fortified. But it is one option among several, and it helps to know how to use it well.
 
 ## When to start
 Indian and global guidelines (WHO, IAP) generally advise exclusive breastfeeding or formula for the first 6 months, then adding complementary foods while milk feeds continue. Look for signs of readiness: baby sits with support, has good head control, shows interest in your food and no longer pushes food out with the tongue. Check timing with your paediatrician, especially for premature babies.

@@ -2,7 +2,7 @@
 Category: Kids
 Description: Easy, proven ways to help children love books: read aloud, make a reading corner, follow their interests and be a reading role model.
 
-Bachche ko kitaab pasand karwana ek din ka kaam nahi, lekin rozana ke chhote kadam kaafi hain.
+Getting your child to love books does not happen in a day, but small daily steps are enough.
 
 ## Start early, and keep going
 Reading aloud from infancy builds language and bonding. Even when kids can read alone, reading **aloud** together is still valuable, sometimes up to age 10 or 12.
@@ -15,7 +15,7 @@ Reading aloud from infancy builds language and bonding. Even when kids can read 
 5. **Do the voices.** Funny voices and sound effects make stories come alive.
 6. **Visit the library** or a bookshop on weekends.
 7. **Be a role model.** Let kids see you reading a book or newspaper, not only a phone.
-8. **Ask questions.** "Aage kya hoga?" "Tumhe kaun sa character pasand hai?"
+8. **Ask questions.** "What do you think happens next?" "Which character do you like best?"
 9. **Mix languages.** Read in Hindi, English and your mother tongue.
 10. **Celebrate progress** with a sticker chart or a small reading party.
 

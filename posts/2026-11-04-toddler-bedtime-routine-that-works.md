@@ -2,7 +2,7 @@
 Category: Toddlers
 Description: A simple, calming toddler bedtime routine, plus tips for handling bedtime resistance, night waking and nap changes.
 
-Soney ka waqt aate hi toddler ki energy double ho jaati hai! Ek simple, same-every-night routine yahi ladai kam karti hai.
+As bedtime comes close, a toddler's energy seems to double! A simple routine that stays the same every night cuts down the battles.
 
 ## Why a routine helps
 Toddlers feel safe when they know what comes next. A predictable routine tells the brain that sleep is coming.

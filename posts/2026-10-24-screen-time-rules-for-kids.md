@@ -2,7 +2,7 @@
 Description: Age-wise screen time guidelines and easy family rules to balance screens with sleep, play, meals and family time.
 Category: Kids
 
-Mobile, tablet, TV: aaj ke bachche screens ke saath hi bade ho rahe hain. Goal screens ko poori tarah hataana nahi hai, balki unhe ek healthy jagah dena hai.
+Phones, tablets and TV: today's children grow up around screens. The goal is not to remove them completely, but to give them a healthy place in the day.
 
 ## What guidelines suggest
 Paediatric groups such as the AAP and WHO broadly suggest:

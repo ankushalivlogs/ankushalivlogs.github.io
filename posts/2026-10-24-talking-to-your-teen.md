@@ -2,16 +2,16 @@
 Description: Practical ways to start conversations with your teen, listen better, set fair rules and spot warning signs that need professional help.
 Category: Teens
 
-Teenage mein bachcha apni duniya banata hai, aur parents ko lagta hai ki wo door ho gaya hai. Sach ye hai ki teens ko aapki zaroorat pehle se zyada hoti hai, bas style alag chahiye.
+Teenagers build a world of their own, and parents often feel left out. The truth is that teens need you more than ever, just in a different way.
 
 ## Listen first
-Most teens shut down at the first lecture. Try letting them finish speaking before you respond. Nod, ask "Phir kya hua?" and hold back advice unless they ask for it.
+Most teens shut down at the first lecture. Try letting them finish speaking before you respond. Nod, ask "And then what happened?" and hold back advice unless they ask for it.
 
 ## Pick the right moment
 Big talks work better side by side than face to face: in the car, on a walk, while cooking or at a late-night snack. Less eye contact feels safer for many teens.
 
 ## Ask open questions
-Instead of "Exam kaisa gaya?", try "Aaj ka din sabse accha kya tha?" or "Kisi cheez ne tumhe pareshan kiya?" Open questions get more than one-word answers.
+Instead of "How was the exam?", try "What was the best part of your day?" or "Did anything bother you today?" Open questions get more than one-word answers.
 
 ## Respect their privacy and their rules
 Teens are building independence. Agree on a few clear, fair rules together (curfew, phone use, study time) instead of setting every rule yourself. They keep what they helped build.

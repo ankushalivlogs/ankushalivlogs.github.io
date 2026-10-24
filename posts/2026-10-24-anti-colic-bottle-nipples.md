@@ -3,7 +3,7 @@ Description: What colic is, how anti-colic bottle nipples work, how to pick the 
 Category: Babies
 Products: teat, nipple, bottle
 
-Raat ke 2 baje jab baby ruk ruk ke rota hai aur aap samajh nahi paate kya karein, tab har parent koi bhi solution try karna chahta hai. Anti-colic nipples usually isi mod par kaam aate hain. Yahan hai ki ye kya hote hain aur kya nahi.
+It is 2 am, your baby will not stop crying, and you cannot tell why. At moments like this, every parent wants to try something. Anti-colic nipples are one of the most common things parents reach for, so here is what they are and what they are not.
 
 ## What is colic, really?
 Doctors often describe colic as crying for more than 3 hours a day, on more than 3 days a week, for over 3 weeks, in a baby who is otherwise healthy and feeding well. It usually starts in the first few weeks, tends to peak around 6 weeks, and often settles by 3 to 4 months. Nobody knows the exact cause.

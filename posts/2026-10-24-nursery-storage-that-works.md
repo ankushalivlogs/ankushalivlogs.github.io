@@ -3,7 +3,7 @@ Description: What to look for in a baby or kids' wardrobe, safety tips like wall
 Category: Parents
 Products: wardrobe, almira
 
-Baby ke kapde bahut jaldi chhote ho jaate hain, aur saaman roz badhta hai. Ek acchi storage setup se subah ke 5 minute bach jaate hain.
+Baby clothes are outgrown fast and the stuff keeps piling up. A good storage setup can save you precious minutes every morning.
 
 ## Why a kids' wardrobe?
 A light plastic or cube wardrobe is popular because it is cheaper than wooden furniture, easy to assemble, easy to move and has open shelves so you can see everything at a glance. Parents use it for clothes, diapers, blankets and toys all in one place.
