@@ -49,6 +49,10 @@ def store(link):
     return next((s for k, s in (("amazon", "Amazon"), ("amzn", "Amazon"), ("flipkart", "Flipkart"), ("fkrt", "Flipkart"),
                                 ("myntra", "Myntra"), ("meesho", "Meesho")) if k in link), "the store")
 
+def nice(d):  # 20261023 -> 23 Oct 2026
+    import datetime
+    return datetime.datetime.strptime(d, "%Y%m%d").strftime("%d %b %Y")
+
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
@@ -90,14 +94,14 @@ def page(title, body, depth=0):
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{r}style.css"></head><body>
 <header><a class="brand" href="{r}index.html">{esc(SITE['name'])}</a>
-<nav><a href="{r}index.html#products">Products</a><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}articles.html">Articles</a>
+<nav><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a>
 <a class="soc" href="{SITE['instagram']}" aria-label="Instagram" target="_blank" rel="noopener">{ICO_IG}</a>
 <a class="soc" href="{SITE['facebook']}" aria-label="Facebook" target="_blank" rel="noopener">{ICO_FB}</a>
 <a class="navbtn" href="{SITE['youtube']}">Subscribe</a></nav></header>
 {body}
 {WAVE}
 <footer><div class="fgrid"><div><div class="brand">{esc(SITE['name'])}</div><p>{esc(SITE['tagline'])}</p></div>
-<div><h5>Explore</h5><a href="{r}index.html#products">Products</a><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}articles.html">Articles</a></div>
+<div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a></div>
 <div><h5>Follow</h5><a href="{SITE['youtube']}">YouTube</a><a href="{SITE['instagram']}">Instagram</a><a href="{SITE['facebook']}">Facebook</a></div></div>
 <p class="fine">As an Amazon Associate we earn from qualifying purchases. Product links are affiliate links; they cost you nothing extra. Shared from our own experience, not medical advice: please check with your doctor for health questions.</p>
 <p class="fine">&copy; {esc(SITE['name'])}</p></footer></body></html>"""
@@ -157,7 +161,7 @@ def main():
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in v["plinks"])
         return (f'<article class="card vid" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}"><a href="{esc(v["webpage_url"])}"><img loading="lazy" '
                 f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt=""></a>'
-                f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {v["upload_date"]}</small>'
+                f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
     long_v = [v for v in vids if not v["short"]]
     short_v = [v for v in vids if v["short"]]
@@ -173,12 +177,12 @@ def main():
 <div class="strip"><div class="stat"><b>{len(products)}</b><small>Products</small></div>
 <div class="stat"><b>{len(long_v) + len(short_v)}</b><small>Videos</small></div><div class="stat"><b>{len(arts)}</b><small>Articles</small></div>
 <p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></section>
-<main><section id="products"><h2>Meet our favourite finds</h2><p class="sub">Baby must-haves, gadgets, audio, shoes and more. Pick a section or search.</p>
-<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chips">{chips}</div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
-<section id="vlogs"><h2>Our vlogs</h2><p class="sub">Every video, with the products from its description.</p>
+<main><section id="vlogs"><h2>Our vlogs</h2><p class="sub">Every video, with the products from its description.</p>
 <div class="vtools"><label>Show <select id="vtype"><option value="all">All videos</option><option value="video">Vlogs</option><option value="short">Shorts</option></select></label>
 <label>Sort by <select id="vsort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="views">Most viewed</option></select></label></div>
 <div class="carousel"><button class="arrow" id="vprev" aria-label="Previous">&lsaquo;</button><div class="track" id="vtrack">{''.join(vcard(v) for v in vids)}</div><button class="arrow" id="vnext" aria-label="Next">&rsaquo;</button></div></section>
+<section id="products"><h2>Meet our favourite finds</h2><p class="sub">Baby must-haves, gadgets, audio, shoes and more. Pick a section or search.</p>
+<input id="q" placeholder="Search products..." aria-label="Search products"><div class="chips">{chips}</div>{sections}<p id="none" hidden>Nothing found. Try another word.</p></section>
 <section id="articles"><h2>Parenting articles</h2><p class="sub">Why parents choose these products, and what to know before you buy.</p><div class="grid">{latest}</div>
 <p class="more"><a class="gbtn" href="articles.html">See all articles</a></p></section></main>
 <script>
