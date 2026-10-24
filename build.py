@@ -97,7 +97,7 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
     ldj = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (ld or []))
     pub = f'<meta property="article:published_time" content="{published}">' if published else ""
     return f"""<!doctype html><html lang="en-IN"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{url}"><meta name="theme-color" content="#7b5cc4"><script>document.documentElement.className="js"</script>
 <link rel="icon" type="image/png" href="{r}img/favicon.png"><link rel="apple-touch-icon" href="{r}img/apple-touch-icon.png">
@@ -113,8 +113,8 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <header><a class="brand" href="{r}index.html">{esc(SITE['name'])}</a>
 <nav><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a>
 <a class="soc" href="{SITE['instagram']}" aria-label="Instagram" target="_blank" rel="noopener">{ICO_IG}</a>
-<a class="soc" href="{SITE['facebook']}" aria-label="Facebook" target="_blank" rel="noopener">{ICO_FB}</a>
-<a class="navbtn" href="{SITE['youtube']}">Subscribe</a></nav></header>
+<a class="soc" href="{SITE['facebook']}" aria-label="Facebook" target="_blank" rel="noopener">{ICO_FB}</a></nav>
+<a class="navbtn" href="{SITE['youtube']}">Subscribe</a></header>
 {body}
 <section class="join"><img src="{r}img/banner-sticker.webp" alt="Ankushali Vlogs family: Ankur, Vaishali and baby Kushu" width="1500" height="600" loading="lazy" decoding="async">
 <h2>Join the Ankushali family</h2><p>Family vlogs, real parenting tips and the products we use. New videos every week.</p>

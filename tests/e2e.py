@@ -42,11 +42,15 @@ with sync_playwright() as pw:
     for vp, w, h, touch in VIEWPORTS:
         ctx = browser.new_context(viewport={"width": w, "height": h}, has_touch=touch, is_mobile=touch and w < 800, device_scale_factor=2 if touch else 1)
         page = ctx.new_page()
-        errors, failed, bytes_total = [], [], [0]
+        errors, failed, own404, bytes_total = [], [], [], [0]
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
         page.on("pageerror", lambda e: errors.append(str(e)))
         page.on("requestfailed", lambda r: failed.append(r.url[:90]))
-        page.on("response", lambda r: bytes_total.__setitem__(0, bytes_total[0] + int((r.headers.get("content-length") or 0))))
+        def on_response(r, bucket=bytes_total, missing=own404):
+            bucket[0] += int((r.headers.get("content-length") or 0))
+            if r.status >= 400 and urlparse(r.url).hostname in ("127.0.0.1", "localhost"):
+                missing.append(r.url[:90])
+        page.on("response", on_response)
         t0 = time.time(); page.goto(BASE + "/index.html", wait_until="load"); load_s = time.time() - t0
         page.wait_for_timeout(2600)
 
@@ -55,6 +59,10 @@ with sync_playwright() as pw:
         rec(vp, "no horizontal scroll", o["sw"] <= o["W"] + 1 and not o["bad"], f"scrollWidth={o['sw']} viewport={o['W']} offenders={o['bad']}")
         rec(vp, "h1 visible + inside viewport", page.evaluate("() => { const r = document.querySelector('h1').getBoundingClientRect(); return r.width > 0 && r.left >= -1 && r.right <= innerWidth + 1 }"))
         rec(vp, "header: brand + Subscribe in view", page.evaluate("() => ['.brand','.navbtn'].every(s => { const r = document.querySelector('header '+s).getBoundingClientRect(); return r.width>0 && r.right <= innerWidth+1 && r.left >= 0 })"))
+        if w <= 800:
+            hh = page.evaluate("() => Math.round(document.querySelector('header').getBoundingClientRect().height)")
+            same_row = page.evaluate("() => { const b = document.querySelector('.brand').getBoundingClientRect(); const s = document.querySelector('header .navbtn').getBoundingClientRect(); return Math.abs(b.top - s.top) < 10 }")
+            rec(vp, "header compact: brand and Subscribe share a row", same_row and hh <= 112, f"height={hh} same_row={same_row}")
         rec(vp, "hero photo visible", page.evaluate("() => { const i = document.querySelector('.hphoto'); return i.complete && i.naturalWidth > 0 && i.getBoundingClientRect().width > 150 }"))
         cols = page.evaluate("() => getComputedStyle(document.querySelector('.hero')).gridTemplateColumns.split(' ').length")
         rec(vp, "hero layout (2 cols desktop, 1 col <900)", (cols == 2) == (w >= 901), f"columns={cols}")
@@ -64,11 +72,13 @@ with sync_playwright() as pw:
         rec(vp, "font size >= 14px for body copy", page.evaluate("() => parseFloat(getComputedStyle(document.querySelector('.sub')).fontSize) >= 14"))
 
         # --- images (force lazy ones)
-        page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')"); page.wait_for_timeout(2500)
+        page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')")
+        page.wait_for_function("() => [...document.images].every(i => i.complete)", timeout=15000)
         broken = page.evaluate("() => [...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src.slice(-60))")
         rec(vp, "all images load", not broken, str(broken[:4]))
         rec(vp, "all images have alt attr", page.evaluate("() => [...document.images].every(i => i.hasAttribute('alt'))"))
-        rec(vp, "no console errors / failed requests", not errors and not failed, f"errors={errors[:2]} failed={failed[:2]}")
+        real_errors = [e for e in errors if not e.startswith("Failed to load resource")]
+        rec(vp, "no console errors / failed requests", not real_errors and not failed and not own404, f"errors={real_errors[:2]} failed={failed[:2]} own404={own404[:2]}")
         rec(vp, "page weight < 2.5MB (declared)", bytes_total[0] < 2_500_000, f"{bytes_total[0]//1024} KB, load event {load_s:.1f}s")
 
         # --- vlogs carousel + dropdowns

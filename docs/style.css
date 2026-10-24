@@ -3,8 +3,8 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 Nunito,system-ui,sans-serif;overflow-x:hidden}
 h1,h2,h3,h4,h5,.brand,.gbtn,.navbtn{font-family:Fredoka,Nunito,sans-serif}a{color:inherit}
-header{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between;align-items:center;padding:12px 22px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.brand{font-weight:600;text-decoration:none;font-size:22px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+header{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;padding:12px 22px;padding-top:max(12px,env(safe-area-inset-top));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{margin-right:auto;display:inline-flex;align-items:center;min-height:40px;font-weight:600;text-decoration:none;font-size:22px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 nav{display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:14px;font-weight:600}nav a{text-decoration:none;color:var(--mut)}nav a:hover{color:var(--rose)}
 .navbtn{border:2px solid var(--rose);color:var(--rose)!important;padding:5px 18px;border-radius:12px}.navbtn:hover{background:var(--rose);color:#fff!important}
 .hero{text-align:center;padding:56px 18px 28px;max-width:860px;margin:0 auto;position:relative}
@@ -42,7 +42,7 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
 .ico{width:20px;height:20px;display:block}nav a.soc{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--mut)}nav a.soc:hover{color:#fff;background:var(--grad);border-color:transparent}
 .vtools{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}.vtools label{font-weight:700;font-size:14px;color:var(--mut)}
-.vtools select{margin-left:6px;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--fg);font:600 14px Nunito,sans-serif;cursor:pointer}.vtools select:focus{outline:none;border-color:var(--violet)}
+.vtools select{margin-left:6px;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--fg);font:600 16px Nunito,sans-serif;cursor:pointer}.vtools select:focus{outline:none;border-color:var(--violet)}
 .carousel{position:relative}.track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 16px;scrollbar-width:thin}
 .track .card{flex:0 0 min(290px,78%);scroll-snap-align:start}
 .arrow{position:absolute;top:35%;z-index:2;width:42px;height:42px;border-radius:50%;border:0;background:var(--grad);color:#fff;font-size:26px;line-height:1;cursor:pointer;box-shadow:var(--shadow)}.arrow:hover{filter:brightness(1.1)}#vprev{left:-10px}#vnext{right:-10px}
@@ -122,7 +122,15 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 
 /* accessibility: bigger tap targets + stronger text contrast */
 nav a:not(.soc):not(.navbtn){padding:10px 6px;display:inline-block}
-@media(max-width:640px){header{padding:6px 14px}nav{gap:6px 12px}.navbtn{padding:8px 16px}}
+@media(max-width:800px){
+header{gap:4px 8px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top))}
+.brand{font-size:18px;margin-right:8px}
+.navbtn{margin-left:auto;padding:8px 14px;white-space:nowrap}
+nav{order:3;flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav a{white-space:nowrap}
+}
+@media(max-width:520px){.author{flex-direction:column;align-items:flex-start}.join .btns a{flex:1 1 140px;text-align:center}}
 /* dark mode: text on the butter-yellow chips */
 :root{--onbutter:#3a3347}@media(prefers-color-scheme:dark){:root{--onbutter:#fdecb4}}
 .pill,.tag,.plinks a{color:var(--onbutter)}
