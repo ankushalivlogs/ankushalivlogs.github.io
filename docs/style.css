@@ -40,3 +40,12 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 .fine{max-width:1000px;margin:14px auto 0;padding-top:14px;border-top:1px solid #34365a;color:#8f8bac;font-size:12px;line-height:1.5}
 @media(max-width:640px){.fgrid{grid-template-columns:1fr 1fr}.fgrid>div:first-child{grid-column:1/-1}.rocket{right:6%}.navbtn{padding:4px 14px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+.ico{width:20px;height:20px;display:block}nav a.soc{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--mut)}nav a.soc:hover{color:#fff;background:var(--grad);border-color:transparent}
+.vtools{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}.vtools label{font-weight:700;font-size:14px;color:var(--mut)}
+.vtools select{margin-left:6px;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--fg);font:600 14px Nunito,sans-serif;cursor:pointer}.vtools select:focus{outline:none;border-color:var(--violet)}
+.carousel{position:relative}.track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 16px;scrollbar-width:thin}
+.track .card{flex:0 0 min(290px,78%);scroll-snap-align:start}
+.arrow{position:absolute;top:35%;z-index:2;width:42px;height:42px;border-radius:50%;border:0;background:var(--grad);color:#fff;font-size:26px;line-height:1;cursor:pointer;box-shadow:var(--shadow)}.arrow:hover{filter:brightness(1.1)}#vprev{left:-10px}#vnext{right:-10px}
+.ptitle{text-align:center;font-weight:600;margin:40px 0 4px}.more{text-align:center;margin-top:22px}.ex{color:var(--mut);font-size:14px}.post .go{color:var(--rose);font-weight:700;font-size:14px;margin-top:auto}.post{gap:8px}
+.post-page h2{text-align:left;font-size:22px;margin:30px 0 6px}.post-page p,.post-page li{font-size:17px}.post-page ul{padding-left:22px}.crumb{margin:0 0 10px}.crumb a{color:var(--violet);text-decoration:none;font-weight:700}
+.related{margin-top:40px}.related h2{margin-top:0}
