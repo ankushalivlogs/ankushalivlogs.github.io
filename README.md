@@ -3,3 +3,7 @@
 Source for https://ankushalivlogs.github.io/Ankushali_Vlogs/ (built site is in `docs/`).
 
 Update: `./fetch.sh` (pulls video descriptions + product photos) then commit and push `docs/`.
+
+## Tests
+
+`python tests/e2e.py` (local, server on :8765) or `python tests/e2e.py https://ankushalivlogs.github.io` runs ~140 checks in real Chrome across phone/tablet/laptop/desktop sizes, light/dark mode and reduced motion.

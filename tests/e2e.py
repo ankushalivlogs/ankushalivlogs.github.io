@@ -42,9 +42,10 @@ with sync_playwright() as pw:
     for vp, w, h, touch in VIEWPORTS:
         ctx = browser.new_context(viewport={"width": w, "height": h}, has_touch=touch, is_mobile=touch and w < 800, device_scale_factor=2 if touch else 1)
         page = ctx.new_page()
-        errors, failed, own404, bytes_total = [], [], [], [0]
+        errors, failed, bytes_total, http_bad, own404 = [], [], [0], [], []
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
         page.on("pageerror", lambda e: errors.append(str(e)))
+        page.on("response", lambda r: http_bad.append((r.status, r.url)) if r.status >= 400 else None)
         page.on("requestfailed", lambda r: failed.append(r.url[:90]))
         def on_response(r, bucket=bytes_total, missing=own404):
             bucket[0] += int((r.headers.get("content-length") or 0))
@@ -73,12 +74,16 @@ with sync_playwright() as pw:
 
         # --- images (force lazy ones)
         page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')")
-        page.wait_for_function("() => [...document.images].every(i => i.complete)", timeout=15000)
+        for _ in range(16):  # up to 8s for slow CDNs
+            if page.evaluate("() => [...document.images].every(i => i.complete)"): break
+            page.wait_for_timeout(500)
         broken = page.evaluate("() => [...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src.slice(-60))")
         rec(vp, "all images load", not broken, str(broken[:4]))
         rec(vp, "all images have alt attr", page.evaluate("() => [...document.images].every(i => i.hasAttribute('alt'))"))
-        real_errors = [e for e in errors if not e.startswith("Failed to load resource")]
-        rec(vp, "no console errors / failed requests", not real_errors and not failed and not own404, f"errors={real_errors[:2]} failed={failed[:2]} own404={own404[:2]}")
+        own = [x for x in http_bad if x[1].startswith(BASE)]; ext = [x for x in http_bad if not x[1].startswith(BASE)]
+        real_errors = [e for e in errors if "Failed to load resource" not in e]
+        rec(vp, "no console errors / failed requests", not real_errors and not failed and not own, f"errors={real_errors[:2]} failed={failed[:2]} own404={own[:2]}")
+        if ext: print(f"  warning [{vp}] external resources failing (not our files): {ext[:3]}")
         rec(vp, "page weight < 2.5MB (declared)", bytes_total[0] < 2_500_000, f"{bytes_total[0]//1024} KB, load event {load_s:.1f}s")
 
         # --- vlogs carousel + dropdowns

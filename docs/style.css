@@ -137,3 +137,4 @@ nav a{white-space:nowrap}
 :root{--onbutter:#3a3347}@media(prefers-color-scheme:dark){:root{--onbutter:#fdecb4}}
 .pill,.tag,.plinks a{color:var(--onbutter)}
 @media(prefers-color-scheme:dark){:root{--grad:linear-gradient(90deg,#c93d62,#6a49b8)}}
+.nothumb{object-fit:contain!important;background:var(--butter);padding:12px}

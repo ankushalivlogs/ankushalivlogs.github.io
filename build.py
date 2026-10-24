@@ -188,7 +188,7 @@ def main():
     def vcard(v):
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in v["plinks"])
         return (f'<article class="card vid" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}"><a href="{esc(v["webpage_url"])}"><img loading="lazy" decoding="async" '
-                f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360"></a>'
+                f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360" onerror="this.onerror=null;this.src=&quot;img/family-sticker.webp&quot;;this.classList.add(&quot;nothumb&quot;)"></a>'
                 f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
     long_v = [v for v in vids if not v["short"]]
