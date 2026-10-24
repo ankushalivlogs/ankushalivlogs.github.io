@@ -99,7 +99,7 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
     return f"""<!doctype html><html lang="en-IN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="canonical" href="{url}"><meta name="theme-color" content="#7b5cc4">
+<link rel="canonical" href="{url}"><meta name="theme-color" content="#7b5cc4"><script>document.documentElement.className="js"</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%B6%3C/text%3E%3C/svg%3E">
 <meta property="og:site_name" content="{esc(SITE['name'])}"><meta property="og:type" content="{kind}"><meta property="og:locale" content="en_IN">
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{esc(image)}">{pub}
@@ -204,11 +204,22 @@ def main():
                 f'<b>{esc(p["title"])}</b><span class="ex">{esc(p["excerpt"][:140])}...</span><span class="go">Read article &rarr;</span></a>')
     latest = "".join(acard(p) for p in arts[:3]) or "<p>Coming soon.</p>"
 
-    body = f"""<section class="hero"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
-<h1>Parenting tips &amp; baby products we <em>actually use</em></h1><p>{esc(SITE['tagline'])}</p>
-<div class="strip"><div class="stat"><b>{len(products)}</b><small>Products</small></div>
-<div class="stat"><b>{len(long_v) + len(short_v)}</b><small>Videos</small></div><div class="stat"><b>{len(arts)}</b><small>Articles</small></div>
-<p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></section>
+    fl = json.loads((ROOT / "data/floaties.json").read_text(encoding="utf-8"))
+    floaties = "".join(f'<div class="f f{n}" style="--r:{r}deg"><span style="--d:{d}px">{fl[k]}</span></div>'
+                       for n, (k, r, d) in enumerate([("kushu", -8, 18), ("teddy", 7, -14), ("rocket", 12, 22), ("bottle", -10, -18), ("pacifier", 6, 12)], 1))
+    words = ["Parenting", "tips", "&amp;", "baby", "products", "we", "actually", "use"]
+    h1w = "".join(("<em>" if k == 6 else "") + f'<span class="w" style="--i:{k}">{w}</span> ' + ("</em>" if k == 7 else "") for k, w in enumerate(words))
+    chips_m = ["👶 Babies", "🧸 Toddlers", "🎒 Kids", "🎧 Teens", "💛 Parents", "🍼 Feeding tips", "🛏️ Safe sleep", "🧷 Diaper guides", "🎥 Family vlogs", "🛍️ Products we use"]
+    marq = "".join(f"<span>{c}</span>" for c in chips_m * 2)
+
+    body = f"""<div class="herowrap"><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><div class="floaties" aria-hidden="true">{floaties}</div>
+<section class="hero"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
+<h1 class="split">{h1w}</h1><p class="lead">{esc(SITE['tagline'])}</p>
+<div class="btns"><a class="gbtn shine" href="#vlogs">Watch our vlogs</a><a class="ghost" href="#products">Shop our picks</a></div>
+<div class="strip"><div class="stat"><b data-n="{len(products)}">{len(products)}</b><small>Products</small></div>
+<div class="stat"><b data-n="{len(long_v) + len(short_v)}">{len(long_v) + len(short_v)}</b><small>Videos</small></div><div class="stat"><b data-n="{len(arts)}">{len(arts)}</b><small>Articles</small></div>
+<p>Spotted in our vlogs, explained in our articles</p><a class="gbtn" href="#products">Browse products</a></div></section></div>
+<div class="marquee" aria-hidden="true"><div class="mtrack">{marq}</div></div>
 <main><section id="vlogs"><h2>Our vlogs</h2><p class="sub">Every video, with the products from its description.</p>
 <div class="vtools"><label>Show <select id="vtype"><option value="all">All videos</option><option value="video">Vlogs</option><option value="short">Shorts</option></select></label>
 <label>Sort by <select id="vsort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="views">Most viewed</option></select></label></div>
@@ -233,6 +244,12 @@ document.getElementById('vnext').onclick=()=>tr.scrollBy({{left:tr.clientWidth*.
 document.getElementById('pprev').onclick=()=>pt.scrollBy({{left:-pt.clientWidth*.8,behavior:'smooth'}});
 document.getElementById('pnext').onclick=()=>pt.scrollBy({{left:pt.clientWidth*.8,behavior:'smooth'}});
 chips.forEach(b=>b.onclick=()=>{{cat=b.dataset.c;chips.forEach(x=>x.classList.toggle('on',x===b));apply()}});
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(!rm){{const io=new IntersectionObserver(es=>es.forEach(e=>{{if(e.isIntersecting){{e.target.classList.add('in');io.unobserve(e.target)}}}}),{{threshold:.12}});
+document.querySelectorAll('main section>h2,main section>.sub,.vtools,#q,.chips,.carousel,.more').forEach(el=>{{el.classList.add('rv');io.observe(el)}});
+document.querySelectorAll('.stat b[data-n]').forEach(b=>{{const n=+b.dataset.n;let t0;b.textContent='0';
+const step=t=>{{t0=t0||t;const k=Math.min((t-t0)/1100,1);b.textContent=Math.round(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)}};setTimeout(()=>requestAnimationFrame(step),500)}});
+const hw=document.querySelector('.herowrap');hw.addEventListener('pointermove',e=>{{const r=hw.getBoundingClientRect();hw.style.setProperty('--px',((e.clientX-r.left)/r.width-.5)*2);hw.style.setProperty('--py',((e.clientY-r.top)/r.height-.5)*2)}})}}
 </script>"""
 
     org = {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/", "sameAs": [SITE["youtube"], SITE["instagram"], SITE["facebook"]]}
