@@ -1,4 +1,4 @@
-:root{--bg:#fbf9fd;--fg:#2e2a3d;--mut:#7a7390;--card:#fff;--line:#ece6f3;--violet:#7b5cc4;--rose:#e8607a;--peach:#f4a261;--blush:#fbd5dc;--butter:#fdecb4;--sky:#cfe3f5;--sage:#a9d3c0;--navy:#1b1d33;--grad:linear-gradient(90deg,var(--rose),var(--violet));--shadow:0 10px 30px rgba(90,70,140,.12)}
+:root{--bg:#fbf9fd;--fg:#2e2a3d;--mut:#645d7b;--card:#fff;--line:#ece6f3;--violet:#7b5cc4;--rose:#c93d62;--peach:#f4a261;--blush:#fbd5dc;--butter:#fdecb4;--sky:#cfe3f5;--sage:#a9d3c0;--navy:#1b1d33;--grad:linear-gradient(90deg,var(--rose),var(--violet));--shadow:0 10px 30px rgba(90,70,140,.12)}
 @media(prefers-color-scheme:dark){:root{--bg:#15131f;--fg:#f1ecf8;--mut:#b0a8c4;--card:#221f31;--line:#37314a;--blush:#6b3446;--butter:#6b5a2a;--sky:#2f4a60;--sage:#355a4b;--violet:#a58bf0;--rose:#ff8fa6;--shadow:0 10px 30px rgba(0,0,0,.35)}}
 *{box-sizing:border-box}html{scroll-behavior:smooth}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 Nunito,system-ui,sans-serif;overflow-x:hidden}
@@ -119,3 +119,11 @@ footer{background:var(--navy);color:#e9e6f5;padding:28px 22px 22px;margin-top:-1
 .author img{width:92px;height:92px;flex:none;filter:drop-shadow(0 6px 10px rgba(80,60,140,.2))}.author b{font-family:Fredoka,sans-serif;font-weight:500}.author p{margin:4px 0 6px;font-size:15px;color:var(--mut)}.author a{color:var(--violet);font-weight:700;text-decoration:none}
 @media(max-width:900px){.herowrap .hero{grid-template-columns:1fr;text-align:center}.hero .btns{justify-content:center}.hero .strip{margin-left:auto}.hphoto{width:min(78%,380px)}.hvis{margin-top:6px}.hvis .f1{left:6%}.hvis .f2{right:6%}.hvis .f3{display:none}}
 @media(prefers-reduced-motion:reduce){.hphoto,.hvis .floaties .f{animation:none!important}}
+
+/* accessibility: bigger tap targets + stronger text contrast */
+nav a:not(.soc):not(.navbtn){padding:10px 6px;display:inline-block}
+@media(max-width:640px){header{padding:6px 14px}nav{gap:6px 12px}.navbtn{padding:8px 16px}}
+/* dark mode: text on the butter-yellow chips */
+:root{--onbutter:#3a3347}@media(prefers-color-scheme:dark){:root{--onbutter:#fdecb4}}
+.pill,.tag,.plinks a{color:var(--onbutter)}
+@media(prefers-color-scheme:dark){:root{--grad:linear-gradient(90deg,#c93d62,#6a49b8)}}
