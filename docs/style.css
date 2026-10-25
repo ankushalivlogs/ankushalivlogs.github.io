@@ -207,3 +207,4 @@ nav a{white-space:nowrap}
 @media(max-width:700px){.fgrid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.tile,.feat,.buy,.play:before{transition:none!important}}
 .pimg{height:auto;aspect-ratio:1/1}.feat .pimg{margin-top:26px}
+.join img{width:min(100%,860px);height:auto;border-radius:28px;filter:none;box-shadow:var(--shadow)}

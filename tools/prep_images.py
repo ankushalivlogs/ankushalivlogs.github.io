@@ -21,19 +21,17 @@ def cutout(path):
     out.putalpha(out.getchannel("A").filter(ImageFilter.GaussianBlur(1)))  # soft edge
     return out
 
-fam = cutout(ROOT / "assets/family-sticker-original.webp"); ban = cutout(ROOT / "assets/banner-sticker-original.webp")
 def fit(im, w): return im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
+fam = cutout(ROOT / "assets/family-sticker-original.webp")                  # sticker with white border -> transparent background
 fit(fam, 900).save(OUT / "family-sticker.webp", quality=88, method=6)
-fit(ban, 1500).save(OUT / "banner-sticker.webp", quality=88, method=6)
-ico = fit(fam, 180); canvas = Image.new("RGBA", (192, 192), (0, 0, 0, 0)); canvas.paste(ico, (6, 6), ico)
+ban = Image.open(ROOT / "assets/banner-original.webp").convert("RGB")          # full-bleed channel banner, used as a rounded card
+fit(ban, 1600).save(OUT / "banner-sticker.webp", quality=86, method=6)
+logo = Image.open(ROOT / "assets/logo-circle-original.png").convert("RGBA")    # circular logo -> favicon + touch icon
+box = logo.getbbox() or (0, 0, *logo.size); logo = logo.crop(box)
+canvas = Image.new("RGBA", (192, 192), (0, 0, 0, 0)); lg = logo.resize((184, 184), Image.LANCZOS); canvas.paste(lg, (4, 4), lg)
 canvas.resize((64, 64), Image.LANCZOS).save(OUT / "favicon.png"); canvas.save(OUT / "apple-touch-icon.png")
-# 1200x630 share image
-bg = Image.new("RGB", (1200, 630)); g = Image.linear_gradient("L").resize((1200, 630)).rotate(0)
-c1, c2 = (251, 213, 220), (207, 227, 245)
-bg = Image.composite(Image.new("RGB", (1200, 630), c2), Image.new("RGB", (1200, 630), c1), g)
-b = fit(ban, 1120); sh = Image.new("RGBA", b.size, (0, 0, 0, 0)); sh.putalpha(b.getchannel("A").point(lambda v: int(v * .25))); sh = sh.filter(ImageFilter.GaussianBlur(14))
-x, y = (1200 - b.width) // 2, (630 - b.height) // 2
-bg.paste(sh.convert("RGB"), (x, y + 10), sh); bg.paste(b, (x, y), b)
-bg.save(OUT.parent / "og.png", optimize=True)
+# 1200x630 share image: whole banner on a matching cream background (nothing cropped)
+edge = ban.getpixel((ban.width - 6, ban.height // 2)); canvas = Image.new("RGB", (1200, 630), edge)
+bw = fit(ban, 1200); canvas.paste(bw, (0, (630 - bw.height) // 2)); canvas.save(OUT.parent / "og.png", optimize=True)
 for f in sorted(OUT.iterdir()): print(f.name, f.stat().st_size // 1024, "KB")
 print("og.png", (OUT.parent / "og.png").stat().st_size // 1024, "KB")
