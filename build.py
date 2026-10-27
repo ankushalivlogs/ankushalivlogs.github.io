@@ -183,7 +183,7 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <div class="btns"><a class="gbtn shine" href="{SITE['youtube']}">Subscribe on YouTube</a><a class="ghost" href="{SITE['instagram']}">Instagram</a><a class="ghost" href="{SITE['facebook']}">Facebook</a></div></section>
 {WAVE}
 <footer><div class="fgrid"><div><div class="brand">{esc(SITE['name'])}</div><p>{esc(SITE['tagline'])}</p></div>
-<div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a><a href="{r}feed.xml">RSS feed</a></div>
+<div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a><a href="{r}media-kit.html">For brands (media kit)</a><a href="{r}feed.xml">RSS feed</a></div>
 <div><h5>Shop by category</h5>{catlinks}</div>
 <div><h5>Follow</h5><a href="{SITE['youtube']}">YouTube</a><a href="{SITE['instagram']}">Instagram</a><a href="{SITE['facebook']}">Facebook</a></div></div>
 <p class="fine">As an Amazon Associate we earn from qualifying purchases. Product links are affiliate links; they cost you nothing extra. Shared from our own experience, not medical advice: please check with your doctor for health questions.</p>
@@ -408,7 +408,7 @@ addEventListener('hashchange',show);show()</script>""")
         desc="Practical parenting articles on newborns, babies, toddlers, kids, teens and new-parent life, plus why parents choose common baby products.",
         path="articles.html", ld=[{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Parenting articles", "url": SITE["url"] + "/articles.html"}]), encoding="utf-8")
 
-    urls = [SITE["url"] + "/", SITE["url"] + "/articles.html"]
+    urls = [SITE["url"] + "/", SITE["url"] + "/articles.html", SITE["url"] + "/media-kit.html"]
 
     # ---- ARTICLES -----------------------------------------------------------------------------------------
     for a in arts:
