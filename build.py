@@ -30,7 +30,7 @@ CATS = [  # (label, icon, keywords) - first match wins, order = order on the pag
     ("Camera & Creator Gear", "🎥", ["gopro", "dji", "osmo", "camera", "tripod", "ring light", "lens", "gimbal", "lapel"]),
     ("Shoes & Fashion", "👟", ["shoe", "sneaker", "sandal", "slipper", "watch", "bag", "jacket", "tshirt", "t-shirt", "shirt", "jeans", "kurta", "saree"]),
     ("Home & Decor", "🏡", ["frame", "table", "cover", "decor", "lamp", "curtain", "wall", "light", "sofa"]),
-    ("Kitchen", "🍳", ["cooker", "mixer", "kettle", "pan", "air fryer", "bottle set", "container", "knife"]),
+    ("Kitchen", "🍳", ["cooker", "mixer", "kettle", "pan", "air fryer", "bottle set", "container", "knife", "stove", "burner", "gas", "chimney", "jar", "grinder", "chopper", "tawa", "kadai"]),
     ("Beauty & Personal Care", "💄", ["perfume", "hair", "straight", "trimmer", "cream", "serum", "shampoo", "makeup", "lipstick"]),
     ("Phones & Gadgets", "📱", ["phone", "mobile", "charger", "power bank", "smartwatch", "tablet", "kindle"]),
     ("Books & Learning", "📚", ["book", "course", "notebook"]),
@@ -127,6 +127,8 @@ def load():
             if not m or any(d in m.group(2) for d in SKIP_DOMAINS):
                 continue
             link = m.group(2)
+            if "ankushali" in (m.group(1) or "").lower():  # storefront / channel links are not products
+                continue
             name = re.sub(r"^[^\w]+", "", (m.group(1) or "")).strip() or GENERIC
             p = products.setdefault(link, {"name": name, "link": link, "vids": []})
             if p["name"] == GENERIC and name != p["name"]:
@@ -262,6 +264,10 @@ def main():
     vids, products = load()
     imgs, titles = jload("data/images.json"), jload("data/titles.json")
     arts = posts()
+    for l in [l for l, p in products.items() if "ankushali" in (p["name"] + " " + titles.get(l, "")).lower()]:  # our own storefront/channel links are not products
+        del products[l]
+    for v in vids:
+        v["plinks"] = [l for l in v["plinks"] if l in products]
     byid = {v["id"]: v for v in vids}
     for d in ("blog", "articles", "category", "products"):
         shutil.rmtree(OUT / d, ignore_errors=True)  # drop pages of unpublished/removed items
@@ -291,6 +297,15 @@ def main():
     groups = [(k, groups[k]) for k in order if k in groups]
     NAV_CATS = [(l, i, slug(l)) for (l, i), ps in groups]
     total_views = sum(v["view_count"] or 0 for v in vids)
+    ch = jload("data/channel.json")
+    subs = str(ch.get("subscribers", ""))
+    subs_attr = f' data-n="{subs}"' if subs.isdigit() else ""
+    try:
+        asof = datetime.datetime.strptime(ch["fetched_at"], "%Y-%m-%d %H:%M").strftime("%d %b, %I:%M %p").lstrip("0") + " IST"
+    except Exception:
+        asof = ""
+    subs_stat = f'<div class="stat"><b{subs_attr}>{subs}</b><small>Subscribers</small></div>' if subs else ""
+    asof_html = f'<p class="asof">Live numbers straight from our YouTube channel &middot; updated {asof}</p>' if asof else ""
     long_v = [v for v in vids if not v["short"]]
 
     # ---- reusable cards
@@ -370,11 +385,11 @@ def main():
 <section class="hero"><div class="hcopy"><span class="pill">&#10024; For parents &amp; parents-to-be</span>
 <h1 class="split">{h1w}</h1><p class="lead">{esc(SITE['tagline'])}</p>
 <div class="btns"><a class="gbtn shine" href="#vlogs">Watch our vlogs</a><a class="ghost" href="#products">Shop our picks</a></div>
-<div class="strip"><div class="stat"><b data-n="{len(plist)}">{len(plist)}</b><small>Products</small></div>
+<div class="strip">{subs_stat}<div class="stat"><b data-n="{len(plist)}">{len(plist)}</b><small>Products</small></div>
 <div class="stat"><b data-n="{len(vids)}">{len(vids)}</b><small>Videos</small></div><div class="stat"><b data-n="{len(arts)}">{len(arts)}</b><small>Articles</small></div>
 <div class="stat"><b data-n="{total_views}">{total_views:,}</b><small>Views</small></div>
 <a class="gbtn" href="#products">Browse products</a></div>
-<ul class="trust"><li>Real products from our vlogs</li><li>Honest picks, no fake reviews</li><li>Same price for you</li></ul></div>
+<ul class="trust"><li>Real products from our vlogs</li><li>Honest picks, no fake reviews</li><li>Same price for you</li></ul>{asof_html}</div>
 <div class="hvis"><img class="hphoto" src="img/family-sticker.webp" alt="Ankur, Vaishali and baby Kushu of Ankushali Vlogs" width="900" height="900" fetchpriority="high" decoding="async"><div class="floaties" aria-hidden="true">{floaties}</div></div></section></div>
 <div class="marquee" aria-hidden="true"><div class="mtrack">{marq}</div></div>
 <main><section id="vlogs"><div class="sh"><span class="eyebrow">Watch &amp; shop</span><h2>Our vlogs</h2><p class="sub">Tap a video to watch it here. The products from that video are listed right under the player.</p></div>

@@ -60,3 +60,8 @@ for row in rows.values():
 
 RAW.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows.values()), encoding="utf-8")
 print(f"{len(rows)} videos in data ({new} new, {bumped} view counts raised)")
+
+try:  # public subscriber / video count shown on the site (never blocks the update)
+    import channel_stats; channel_stats.main()
+except Exception as e:
+    print("channel stats skipped:", e)

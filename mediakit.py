@@ -32,7 +32,8 @@ def main():
     wa = f"https://wa.me/{CFG['whatsapp']}?text={quote('Hi Ankushali Vlogs team, we found your media kit and would like to discuss a collaboration with our brand.')}"
 
     stat = lambda n, l: f'<div class="st"><b>{n}</b><span>{l}</span></div>'
-    stats = (stat(f"{len(vids)}", "videos & Shorts published") + stat(f"{tv:,}", "total YouTube views") + stat(B.kfmt(best["view_count"] or 0), "views on our best video")
+    ch = B.jload("data/channel.json")
+    stats = ((stat(ch["subscribers"], "YouTube subscribers") if ch.get("subscribers") else "") + stat(f"{len(vids)}", "videos & Shorts published") + stat(f"{tv:,}", "total YouTube views") + stat(B.kfmt(best["view_count"] or 0), "views on our best video")
              + stat(B.kfmt(avg_recent), "avg views, latest 8 vlogs") + stat(CFG["ig_followers"], "Instagram followers") + stat(CFG["ig_avg_likes"], "avg likes per reel"))
     topcards = "".join(
         f'<a class="vc" href="{esc(v["webpage_url"])}" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"><i>&#9654;</i></span>'
@@ -85,7 +86,7 @@ nav.top .links{{display:flex;gap:20px;font-size:13px;font-weight:600;color:var(-
 .roles{{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}}.role{{border-radius:16px;padding:10px 16px;font-size:13px;background:#fff;border:1px solid var(--line)}}.role small{{display:block;font:700 10px Manrope;letter-spacing:.14em;color:var(--gold)}}
 .cta{{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}}
 .hvis{{position:relative;text-align:center}}.hvis img{{width:min(100%,470px);height:auto;filter:drop-shadow(0 22px 30px rgba(91,63,160,.25));animation:fl 7s ease-in-out infinite}}@keyframes fl{{50%{{transform:translateY(-10px) rotate(1deg)}}}}
-.stats{{display:grid;grid-template-columns:repeat(6,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:26px;margin:10px 0 0;overflow:hidden}}
+.stats{{display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:26px;margin:10px 0 0;overflow:hidden}}
 .st{{padding:22px 14px;text-align:center;border-right:1px solid var(--line)}}.st:last-child{{border:0}}.st b{{display:block;font:600 clamp(24px,3.2vw,36px) 'Playfair Display';color:var(--plum)}}.st span{{font-size:12px;color:var(--mut);line-height:1.3;display:block}}
 section{{padding:56px 0 0}}.sec-h{{margin-bottom:22px}}.kick{{font:700 11px Manrope;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}}.sec-h h2{{font-size:clamp(28px,4.4vw,42px);line-height:1.12;margin-top:6px}}.sec-h p{{color:var(--mut);max-width:620px;margin:8px 0 0}}
 .two{{display:grid;grid-template-columns:1fr 1fr;gap:26px}}.card{{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px}}.card h3{{font-size:20px;margin:6px 0}}.card p{{margin:0;color:var(--mut);font-size:15px}}
