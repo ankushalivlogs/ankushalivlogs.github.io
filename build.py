@@ -299,6 +299,7 @@ def main():
     total_views = sum(v["view_count"] or 0 for v in vids)
     ch = jload("data/channel.json")
     subs = str(ch.get("subscribers", ""))
+    vcount = ch.get("videos") or len(vids)  # same number YouTube shows on the channel page
     subs_attr = f' data-n="{subs}"' if subs.isdigit() else ""
     try:
         asof = datetime.datetime.strptime(ch["fetched_at"], "%Y-%m-%d %H:%M").strftime("%d %b, %I:%M %p").lstrip("0") + " IST"
@@ -386,7 +387,7 @@ def main():
 <h1 class="split">{h1w}</h1><p class="lead">{esc(SITE['tagline'])}</p>
 <div class="btns"><a class="gbtn shine" href="#vlogs">Watch our vlogs</a><a class="ghost" href="#products">Shop our picks</a></div>
 <div class="strip">{subs_stat}<div class="stat"><b data-n="{len(plist)}">{len(plist)}</b><small>Products</small></div>
-<div class="stat"><b data-n="{len(vids)}">{len(vids)}</b><small>Videos</small></div><div class="stat"><b data-n="{len(arts)}">{len(arts)}</b><small>Articles</small></div>
+<div class="stat"><b data-n="{vcount}">{vcount}</b><small>Videos</small></div><div class="stat"><b data-n="{len(arts)}">{len(arts)}</b><small>Articles</small></div>
 <div class="stat"><b data-n="{total_views}">{total_views:,}</b><small>Views</small></div>
 <a class="gbtn" href="#products">Browse products</a></div>
 <ul class="trust"><li>Real products from our vlogs</li><li>Honest picks, no fake reviews</li><li>Same price for you</li></ul>{asof_html}</div>
