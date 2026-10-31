@@ -83,10 +83,23 @@ def public_views(vid):
     m = re.search(r'"viewCount":"(\d+)"', html)
     return int(m.group(1)) if m else None
 
+def public_stats(vid):
+    """exact public view and like counts from the watch page"""
+    rq = urllib.request.Request(f"https://www.youtube.com/watch?v={vid}&hl=en",
+        headers={"User-Agent": UA, "Accept-Language": "en-US,en;q=0.9", "Cookie": "CONSENT=YES+cb"})
+    try:
+        h = urllib.request.urlopen(rq, timeout=25).read().decode("utf-8", "replace")
+    except Exception:
+        return None, None
+    v = re.search(r'"viewCount":"(\d+)"', h); l = re.search(r'"likeCount":"?(\d+)', h)
+    return (int(v.group(1)) if v else None), (int(l.group(1)) if l else None)
+
 bumped = 0
 for row in rows.values():
     time.sleep(0.2)
-    live = public_views(row["id"])
+    live, likes = public_stats(row["id"])
+    if likes is not None:
+        row["like_count"] = likes
     old = row.get("view_count") or 0
     if live and live > old:
         row["view_count"] = live

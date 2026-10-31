@@ -118,6 +118,8 @@ def jload(rel):
 
 def load():
     rows = [json.loads(l) for l in (ROOT / "data/raw.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+    gone = set(jload("data/removed.json") or [])  # videos deleted/made private on YouTube
+    rows = [r for r in rows if r["id"] not in gone]
     rows.sort(key=lambda r: r["upload_date"] or "", reverse=True)
     products, vids = {}, []
     for r in rows:
@@ -356,7 +358,7 @@ def main():
                 f'data-title="{esc(v["title"])}" data-prods="{esc(json.dumps(data, ensure_ascii=False))}">'
                 f'<a class="vthumb" href="{esc(v["webpage_url"])}" aria-label="Watch: {esc(v["title"])}"><img loading="lazy" decoding="async" '
                 f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360" onerror="this.onerror=null;this.src=&quot;img/family-sticker.webp&quot;;this.classList.add(&quot;nothumb&quot;)"><span class="play" aria-hidden="true"></span></a>'
-                f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}' + (f' &middot; {kfmt(v["view_count"])} views' if v["view_count"] else "") + '</small>'
+                f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}' + (f' &middot; <span class="num">{v["view_count"]:,} views</span>' if v["view_count"] else "") + (f' &middot; <span class="num">{v["like_count"]:,} likes</span>' if v.get("like_count") else "") + '</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
 
     # ---- HOME ---------------------------------------------------------------------------------------------
