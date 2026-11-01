@@ -19,6 +19,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install markdown
       - run: python update.py
+        env: { YT_API_KEY: "${{ secrets.YT_API_KEY }}" }
       - run: python images.py
         continue-on-error: true   # Amazon sometimes blocks image lookups; cached photos are kept
       - run: python build.py
