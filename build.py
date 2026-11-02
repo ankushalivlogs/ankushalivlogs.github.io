@@ -120,7 +120,8 @@ def load():
     rows = [json.loads(l) for l in (ROOT / "data/raw.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     gone = set(jload("data/removed.json") or [])  # videos deleted/made private on YouTube
     rows = [r for r in rows if r["id"] not in gone]
-    rows.sort(key=lambda r: r["upload_date"] or "", reverse=True)
+    rows = [r for r in rows if r.get("upload_date")]  # a half-read video must never break the build
+    rows.sort(key=lambda r: r["upload_date"], reverse=True)
     products, vids = {}, []
     for r in rows:
         vp = []

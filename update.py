@@ -99,6 +99,8 @@ if feed is None and not api_ids:
             title = re.search(r'<meta name="title" content="([^"]*)"', h)
             desc = re.search(r'"shortDescription":"((?:[^"\\]|\\.)*)"', h)
             date = re.search(r'itemprop="datePublished" content="(\d{4}-\d{2}-\d{2})', h)
+            if not date:  # consent/blocked page: skip, a later run will retry
+                print("no date for", vid, "- skipped"); continue
             views = re.search(r'"viewCount":"(\d+)"', h); secs = re.search(r'"lengthSeconds":"(\d+)"', h)
             rows[vid] = {"id": vid, "title": _h.unescape(title.group(1)) if title else vid,
                          "description": json.loads('"' + desc.group(1) + '"') if desc else "",
