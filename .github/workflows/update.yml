@@ -31,5 +31,8 @@ jobs:
           git add -A
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git commit -m "Auto-update site"
-          git push
+          for i in 1 2 3; do  # someone else may have pushed meanwhile: rebase on top (our fresh files win) and retry
+            git pull --rebase -X theirs -q && git push && break
+            sleep 5
+          done
           gh api -X POST repos/${{ github.repository }}/pages/builds || true
