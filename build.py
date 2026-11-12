@@ -245,7 +245,7 @@ chips.forEach(b=>b.onclick=()=>{cat=b.dataset.c;chips.forEach(x=>x.classList.tog
 /* watch & shop modal */
 const dlg=document.getElementById('vmodal'),vf=document.getElementById('vframe'),vmp=document.getElementById('vmprods');
 function closeV(){vf.innerHTML='';if(dlg.open)dlg.close()}
-tr.addEventListener('click',e=>{const a=e.target.closest('.vthumb');if(!a||!dlg.showModal||e.metaKey||e.ctrlKey)return;e.preventDefault();
+tr.addEventListener('click',e=>{const a=e.target.closest('.vthumb[data-modal]');if(!a||!dlg.showModal||e.metaKey||e.ctrlKey)return;e.preventDefault();
 const c=a.closest('.vid'),id=c.dataset.id,ps=JSON.parse(c.dataset.prods||'[]');
 vf.className='vframe'+(c.dataset.type==='short'?' short':'');
 vf.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="'+c.dataset.title.replace(/"/g,'&quot;')+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
@@ -357,9 +357,9 @@ def main():
         links = "".join(f'<a href="{esc(l)}" rel="sponsored noopener" target="_blank">{esc(products[l]["name"])}</a>' for l in dict.fromkeys(v["plinks"]))
         return (f'<article class="card vid" data-id="{v["id"]}" data-date="{v["upload_date"]}" data-views="{v["view_count"] or 0}" data-type="{"short" if v["short"] else "video"}" '
                 f'data-title="{esc(v["title"])}" data-prods="{esc(json.dumps(data, ensure_ascii=False))}">'
-                f'<a class="vthumb" href="{esc(v["webpage_url"])}" aria-label="Watch: {esc(v["title"])}"><img loading="lazy" decoding="async" '
+                f'<a class="vthumb" href="videos/{v["id"]}.html" aria-label="Watch: {esc(v["title"])}"><img loading="lazy" decoding="async" '
                 f'src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360" onerror="this.onerror=null;this.src=&quot;img/family-sticker.webp&quot;;this.classList.add(&quot;nothumb&quot;)"><span class="play" aria-hidden="true"></span></a>'
-                f'<h4>{esc(v["title"])}</h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}' + (f' &middot; <span class="num">{v["view_count"]:,} views</span>' if v["view_count"] else "") + (f' &middot; <span class="num">{v["like_count"]:,} likes</span>' if v.get("like_count") else "") + '</small>'
+                f'<h4><a href="videos/{v["id"]}.html">{esc(v["title"])}</a></h4><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}' + (f' &middot; <span class="num">{v["view_count"]:,} views</span>' if v["view_count"] else "") + (f' &middot; <span class="num">{v["like_count"]:,} likes</span>' if v.get("like_count") else "") + '</small>'
                 + (f'<div class="plinks">{links}</div>' if links else "") + "</article>")
 
     # ---- HOME ---------------------------------------------------------------------------------------------

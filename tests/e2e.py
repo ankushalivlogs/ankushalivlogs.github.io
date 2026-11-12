@@ -151,16 +151,12 @@ with sync_playwright() as pw:
         rec(vp, "home: top picks shows 3 cards with Buy buttons", page.evaluate("() => document.querySelectorAll('.feat .buy').length") >= 1)
         tiles = page.evaluate("() => [...document.querySelectorAll('.tile')].map(a => a.getAttribute('href'))")
         rec(vp, "home: category tiles present", len(tiles) >= 5, f"{len(tiles)} tiles")
-        # modal: open a video that lists products, check player + products + close
-        page.evaluate("() => { const c = [...document.querySelectorAll('#vtrack .vid')].find(c => JSON.parse(c.dataset.prods).length >= 1); c.scrollIntoView({block:'center'}); window.__c = c }")
-        page.wait_for_timeout(600)
-        page.evaluate("() => window.__c.querySelector('.vthumb').click()"); page.wait_for_timeout(900)
-        st = page.evaluate("() => ({open: document.getElementById('vmodal').open, src: (document.querySelector('#vframe iframe')||{}).src || '', prods: document.querySelectorAll('.vmp').length, title: document.getElementById('vmtitle').textContent.length})")
-        rec(vp, "modal: opens with YouTube player + product list", st["open"] and "youtube-nocookie.com/embed/" in st["src"] and st["prods"] >= 1 and st["title"] > 0, str(st))
-        inside = page.evaluate("() => { const r = document.getElementById('vmodal').getBoundingClientRect(); return r.left >= -1 && r.right <= innerWidth + 1 && r.top >= -1 && r.bottom <= innerHeight + 1 }")
-        rec(vp, "modal: fits inside the screen", inside)
-        page.keyboard.press("Escape"); page.wait_for_timeout(400)
-        rec(vp, "modal: Esc closes and stops the video", page.evaluate("() => !document.getElementById('vmodal').open && !document.getElementById('vframe').innerHTML"))
+        # vlog cards link to their own video page (embed + products + subscribe live there)
+        bad = page.evaluate("() => [...document.querySelectorAll('#vtrack .vid')].filter(c => { const id = c.dataset.id; return !c.querySelector('.vthumb').getAttribute('href').endsWith('videos/' + id + '.html') || !c.querySelector('h4 a').getAttribute('href').endsWith('videos/' + id + '.html') }).length")
+        rec(vp, "vlog cards: thumbnail and title link to their video page", bad == 0, f"{bad} cards wrong")
+        href = page.evaluate("() => document.querySelector('#vtrack .vid .vthumb').getAttribute('href')")
+        r = page.request.get(BASE + "/" + href)
+        rec(vp, "vlog cards: video page loads with player, YouTube and Subscribe buttons", r.ok and 'class="lite"' in r.text() and "sub_confirmation=1" in r.text() and "VideoObject" in r.text(), f"{href} -> {r.status}")
         # sticky mobile bar
         if w < 760:
             page.evaluate("() => scrollTo(0, 1200)"); page.wait_for_timeout(700)
