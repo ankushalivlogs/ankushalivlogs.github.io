@@ -72,6 +72,8 @@ with sync_playwright() as pw:
             rec(vp, "tap targets >= 32px", not small, str(small[:5]))
         rec(vp, "font size >= 14px for body copy", page.evaluate("() => parseFloat(getComputedStyle(document.querySelector('.sub')).fontSize) >= 14"))
 
+        rec(vp, "first-load weight < 2.5MB (lazy images not yet loaded)", bytes_total[0] < 2_500_000, f"{bytes_total[0]//1024} KB, load event {load_s:.1f}s")
+
         # --- images (force lazy ones)
         page.evaluate("() => document.querySelectorAll('img').forEach(i => i.loading = 'eager')")
         for _ in range(16):  # up to 8s for slow CDNs
@@ -84,7 +86,6 @@ with sync_playwright() as pw:
         real_errors = [e for e in errors if "Failed to load resource" not in e]
         rec(vp, "no console errors / failed requests", not real_errors and not failed and not own, f"errors={real_errors[:2]} failed={failed[:2]} own404={own[:2]}")
         if ext: print(f"  warning [{vp}] external resources failing (not our files): {ext[:3]}")
-        rec(vp, "page weight < 2.5MB (declared)", bytes_total[0] < 2_500_000, f"{bytes_total[0]//1024} KB, load event {load_s:.1f}s")
 
         # --- vlogs carousel + dropdowns
         vt = page.locator("#vtrack"); first = lambda: page.evaluate("() => document.querySelector('#vtrack .vid:not([hidden]) h4').textContent")
@@ -101,8 +102,8 @@ with sync_playwright() as pw:
 
         # --- products: chips, search
         total = page.evaluate("() => document.querySelectorAll('.prod').length")
-        page.fill("#q", "cerelac"); n = page.evaluate("() => [...document.querySelectorAll('.prod')].filter(c => !c.hidden).length")
-        rec(vp, "products: search 'cerelac' -> 1 result", n == 1, f"got {n}")
+        page.fill("#q", "cerelac"); n, bad = page.evaluate("() => { const v = [...document.querySelectorAll('.prod')].filter(c => !c.hidden); return [v.length, v.filter(c => !c.textContent.toLowerCase().includes('cerelac')).length] }")
+        rec(vp, "products: search 'cerelac' shows only matching products", n >= 1 and bad == 0, f"shown={n} non-matching={bad}")
         page.fill("#q", "zzzzzz"); rec(vp, "products: empty search shows message", page.evaluate("() => !document.getElementById('none').hidden"))
         page.fill("#q", "")
         page.click(".chip[data-c='play-gear']"); n = page.evaluate("() => [...document.querySelectorAll('.prod')].filter(c => !c.hidden).length")

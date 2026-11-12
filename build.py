@@ -188,7 +188,7 @@ def page(title, body, depth=0, desc=None, path="", image=None, ld=None, kind="we
 <div class="btns"><a class="gbtn shine" href="{SITE['youtube']}">Subscribe on YouTube</a><a class="ghost" href="{SITE['instagram']}">Instagram</a><a class="ghost" href="{SITE['facebook']}">Facebook</a></div></section>
 {WAVE}
 <footer><div class="fgrid"><div><div class="brand">{esc(SITE['name'])}</div><p>{esc(SITE['tagline'])}</p></div>
-<div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}articles.html">Articles</a><a href="{r}media-kit.html">For brands (media kit)</a><a href="{r}feed.xml">RSS feed</a></div>
+<div><h5>Explore</h5><a href="{r}index.html#vlogs">Vlogs</a><a href="{r}index.html#products">Products</a><a href="{r}videos.html">All videos</a><a href="{r}articles.html">Articles</a><a href="{r}media-kit.html">For brands (media kit)</a><a href="{r}feed.xml">RSS feed</a></div>
 <div><h5>Shop by category</h5>{catlinks}</div>
 <div><h5>Follow</h5><a href="{SITE['youtube']}">YouTube</a><a href="{SITE['instagram']}">Instagram</a><a href="{SITE['facebook']}">Facebook</a></div></div>
 <p class="fine">As an Amazon Associate we earn from qualifying purchases. Product links are affiliate links; they cost you nothing extra. Shared from our own experience, not medical advice: please check with your doctor for health questions.</p>
@@ -482,7 +482,7 @@ addEventListener('hashchange',show);show()</script>""")
         path = f"products/{p['slug']}.html"
         vl = [byid[i] for i in p["vids"] if i in byid]
         vids_html = "".join(
-            f'<a class="card vmini" href="{esc(v["webpage_url"])}" target="_blank" rel="noopener"><span class="vt"><img loading="lazy" decoding="async" src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360" '
+            f'<a class="card vmini" href="../videos/{v["id"]}.html"><span class="vt"><img loading="lazy" decoding="async" src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360" '
             f'onerror="this.onerror=null;this.src=&quot;../img/family-sticker.webp&quot;;this.classList.add(&quot;nothumb&quot;)"><span class="play" aria-hidden="true"></span></span><b>{esc(v["title"][:80])}</b><small>{nice(v["upload_date"])}</small></a>' for v in vl[:6])
         same = [x for x in plist if x["cat"] == p["cat"] and x is not p][:4]
         arts_html = (f'<section class="related"><h2>Read before you buy</h2><div class="grid">{"".join(acard(a, "../articles/") for a in p["arts"][:3])}</div></section>' if p["arts"] else "")
@@ -506,6 +506,67 @@ addEventListener('hashchange',show);show()</script>""")
             desc=f"{p['name']} as seen in our family vlogs. Watch it in use, read our buying checklist and check the price on {p['store'] or 'the store'}.", path=path,
             image=shrink(p["img"], 760) if p["img"] else None, ld=ld, mbar=mb), encoding="utf-8")
         urls.append(f"{SITE['url']}/{path}")
+
+    # ---- VIDEO PAGES: one indexable page per video, funnels visitors to the YouTube video + channel ---------
+    (OUT / "videos").mkdir(exist_ok=True)
+    SUB = SITE["youtube"] + ("&" if "?" in SITE["youtube"] else "?") + "sub_confirmation=1"
+    pbylink = {p["link"]: p for p in plist}
+
+    def iso_dur(sec):
+        sec = int(sec or 0)
+        return f"PT{sec // 3600}H{sec % 3600 // 60}M{sec % 60}S" if sec >= 3600 else f"PT{sec // 60}M{sec % 60}S"
+
+    def clean_desc(t):
+        lines = [l.strip() for l in (t or "").splitlines()]
+        keep = [l for l in lines if l and not re.search(r"https?://", l) and not l.startswith("#")]
+        return keep
+
+    def vmini(v, pre=""):
+        return (f'<a class="card vmini" href="{pre}{v["id"]}.html"><span class="vt"><img loading="lazy" decoding="async" src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="{esc(v["title"])}" width="480" height="360">'
+                f'<span class="play" aria-hidden="true"></span></span><b>{esc(v["title"][:80])}</b><small>{"Short" if v["short"] else "Video"} &middot; {nice(v["upload_date"])}'
+                + (f' &middot; {v["view_count"]:,} views' if v["view_count"] else "") + '</small></a>')
+
+    for i, v in enumerate(vids):
+        path = f"videos/{v['id']}.html"
+        text = clean_desc(v.get("description"))
+        desc = (" ".join(text)[:155].rsplit(" ", 1)[0] if text else
+                f"Watch {v['title']} from the Ankushali Vlogs family channel, and see the products we use in it.")
+        prods = [pbylink[l] for l in dict.fromkeys(v["plinks"]) if l in pbylink]
+        prods_html = (f'<section class="related"><h2>Products in this video</h2><div class="grid pgrid">{"".join(prod_card(x, "../", False, False) for x in prods)}</div></section>' if prods else "")
+        others = [x for x in vids[max(0, i - 3):i + 4] if x is not v][:6]
+        more_html = f'<section class="related"><h2>More from our channel</h2><div class="grid vgrid">{"".join(vmini(x) for x in others)}</div></section>' if others else ""
+        stats = " &middot; ".join(x for x in (f'{v["view_count"]:,} views' if v["view_count"] else "", f'{v["like_count"]:,} likes' if v.get("like_count") else "") if x)
+        body_text = "".join(f"<p>{esc(l)}</p>" for l in text[:8])
+        yt = v["webpage_url"]
+        b = (f'<main class="vidpage"><p class="crumb"><a href="../index.html">Home</a> &rsaquo; <a href="../videos.html">Videos</a> &rsaquo; {esc(v["title"][:60])}</p>'
+             f'<h1>{esc(v["title"])}</h1><small>{"Short" if v["short"] else "Video"} &middot; <time datetime="{v["upload_date"][:4]}-{v["upload_date"][4:6]}-{v["upload_date"][6:]}">{nice(v["upload_date"])}</time>{" &middot; " + stats if stats else ""}</small>'
+             f'<div class="vwrap{" short" if v["short"] else ""}" data-id="{v["id"]}"><button type="button" class="lite" aria-label="Play video: {esc(v["title"])}"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" alt="" width="480" height="360" fetchpriority="high"><span class="play" aria-hidden="true"></span></button></div>'
+             f'<div class="vbtns"><a class="gbtn shine" href="{esc(yt)}" rel="noopener" target="_blank">&#9654; Watch on YouTube</a><a class="ghost" href="{esc(SUB)}" rel="noopener" target="_blank">Subscribe &amp; get new videos</a></div>'
+             f'{share_box(v["title"] + " | " + SITE["name"], path)}<div class="vdesc">{body_text}</div>{prods_html}{more_html}</main>')
+        ld = [{"@context": "https://schema.org", "@type": "VideoObject", "name": v["title"], "description": desc, "inLanguage": "en-IN",
+               "thumbnailUrl": [f"https://i.ytimg.com/vi/{v['id']}/hqdefault.jpg"], "uploadDate": f"{v['upload_date'][:4]}-{v['upload_date'][4:6]}-{v['upload_date'][6:]}",
+               "duration": iso_dur(v.get("duration")), "contentUrl": yt, "embedUrl": f"https://www.youtube.com/embed/{v['id']}",
+               "interactionStatistic": {"@type": "InteractionCounter", "interactionType": {"@type": "WatchAction"}, "userInteractionCount": int(v["view_count"] or 0)},
+               "publisher": {"@type": "Organization", "name": SITE["name"], "url": SITE["url"] + "/"}},
+              {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                  {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE["url"] + "/"},
+                  {"@type": "ListItem", "position": 2, "name": "Videos", "item": SITE["url"] + "/videos.html"},
+                  {"@type": "ListItem", "position": 3, "name": v["title"], "item": f"{SITE['url']}/{path}"}]}]
+        js = """<script>document.querySelectorAll('.vwrap').forEach(function(w){w.querySelector('.lite').onclick=function(){var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+w.dataset.id+'?autoplay=1&rel=0';f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;f.title='YouTube video player';w.innerHTML='';w.appendChild(f)}})</script>"""
+        mb = f'<nav class="mbar" aria-label="Watch"><a class="s" href="{esc(yt)}" rel="noopener" target="_blank">&#9654; Watch on YouTube</a><a class="p" href="{esc(SUB)}" rel="noopener" target="_blank">Subscribe</a></nav>'
+        t = v["title"] if SITE["name"].lower() in v["title"].lower() else f"{v['title']} | {SITE['name']}"
+        if len(t) > 70:  # Google cuts long titles: keep the main words, end with the channel name
+            t = v["title"][:56].rsplit(" ", 1)[0] + "… | " + SITE["name"]
+        (OUT / path).write_text(page(t, b, 1, desc=desc, path=path, image=f"https://i.ytimg.com/vi/{v['id']}/hqdefault.jpg",
+            ld=ld, kind="video.other", mbar=mb, extra_js=js), encoding="utf-8")
+        urls.append(f"{SITE['url']}/{path}")
+
+    vl_html = ('<main><h1 class="ptitle">All our videos &amp; shorts</h1><p class="sub">Watch every Ankushali Vlogs video, with the products we use in each one.</p>'
+               f'<div class="grid vgrid">{"".join(vmini(x, "videos/") for x in vids)}</div></main>')
+    (OUT / "videos.html").write_text(page("All Ankushali Vlogs Videos & Shorts: Family Vlogs | " + SITE["name"], vl_html,
+        desc="Every Ankushali Vlogs family vlog and short in one place, with the baby and everyday products we use in each video.", path="videos.html",
+        ld=[{"@context": "https://schema.org", "@type": "CollectionPage", "name": "All videos", "url": SITE["url"] + "/videos.html"}]), encoding="utf-8")
+    urls.insert(1, SITE["url"] + "/videos.html")
 
     # ---- feed, sitemap, robots, 404 -----------------------------------------------------------------------
     today = datetime.date.today().isoformat()
